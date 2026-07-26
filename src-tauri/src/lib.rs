@@ -3,6 +3,7 @@ mod hosts;
 mod panel;
 mod secrets;
 mod ssh;
+mod sshconfig;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -19,6 +20,7 @@ pub fn run() {
             hosts::hosts_save,
             hosts::hosts_delete,
             hostkeys::hostkey_trust,
+            sshconfig::sshconfig_hosts,
             panel::panel_open,
             panel::panel_list,
             panel::panel_stats,

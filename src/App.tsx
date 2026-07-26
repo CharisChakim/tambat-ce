@@ -4,6 +4,7 @@ import Logo from "./components/Logo";
 import FilePanel from "./components/FilePanel";
 import HostForm from "./components/HostForm";
 import HostKeyPrompt from "./components/HostKeyPrompt";
+import ImportSshConfig from "./components/ImportSshConfig";
 import SecretPrompt from "./components/SecretPrompt";
 import TermView from "./components/TermView";
 import {
@@ -16,7 +17,7 @@ import {
   secretGet,
   secretSet,
 } from "./api";
-import type { Host, HostKeyInfo, SaveMode, Tab, TabStatus } from "./types";
+import type { ConfigHost, Host, HostKeyInfo, SaveMode, Tab, TabStatus } from "./types";
 
 let tabCounter = 0;
 const newTabId = () => `tab-${++tabCounter}`;
@@ -44,6 +45,7 @@ export default function App() {
   );
   /** konfirmasi fingerprint server yang belum dipercaya, untuk tab tertentu */
   const [hostKey, setHostKey] = useState<{ tabId: string; info: HostKeyInfo } | null>(null);
+  const [showImport, setShowImport] = useState(false);
 
   useEffect(() => {
     hostsList().then(setHosts).catch(console.error);
@@ -190,6 +192,18 @@ export default function App() {
     openTab(host, host.authType === "agent" ? undefined : secret);
   };
 
+  const importHosts = async (chosen: ConfigHost[]) => {
+    setShowImport(false);
+    let list = hosts;
+    for (const c of chosen) {
+      list = await hostsSave({ ...c, id: crypto.randomUUID() }).catch((e) => {
+        console.error(e);
+        return list;
+      });
+    }
+    setHosts(list);
+  };
+
   const deleteHost = async (host: Host) => {
     if (!window.confirm(`Hapus host "${host.label}"?`)) return;
     secretCache.delete(host.id);
@@ -207,6 +221,7 @@ export default function App() {
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         onConnect={connect}
         onAdd={() => setFormHost(null)}
+        onImport={() => setShowImport(true)}
         onEdit={(h) => setFormHost(h)}
         onDelete={deleteHost}
       />
@@ -304,6 +319,13 @@ export default function App() {
           initial={formHost}
           onSave={saveHost}
           onClose={() => setFormHost(undefined)}
+        />
+      )}
+      {showImport && (
+        <ImportSshConfig
+          existing={hosts}
+          onImport={importHosts}
+          onClose={() => setShowImport(false)}
         />
       )}
       {hostKey && (

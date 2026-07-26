@@ -10,6 +10,7 @@ interface Props {
   onEdit: (host: Host) => void;
   onDelete: (host: Host) => void;
   onAdd: () => void;
+  onImport: () => void;
 }
 
 /** Huruf awal label (atau host) untuk lencana rail. */
@@ -23,6 +24,7 @@ export default function Sidebar({
   onEdit,
   onDelete,
   onAdd,
+  onImport,
 }: Props) {
   const [q, setQ] = useState("");
 
@@ -126,6 +128,9 @@ export default function Sidebar({
 
       <button className="btn btn--primary add-btn" onClick={onAdd}>
         + Host baru
+      </button>
+      <button className="import-btn" onClick={onImport}>
+        Impor dari ~/.ssh/config
       </button>
     </aside>
   );

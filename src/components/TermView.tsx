@@ -1,7 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import { SearchAddon } from "@xterm/addon-search";
 import { WebLinksAddon } from "@xterm/addon-web-links";
+import { WebglAddon } from "@xterm/addon-webgl";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import "@xterm/xterm/css/xterm.css";
 import {
@@ -45,6 +47,16 @@ const TERM_THEME = {
 /** OSC 7 dikirim shell sebagai "file://hostname/path/absolut" */
 const OSC7_RE = /^file:\/\/[^/]*(\/.*)$/;
 
+/** Warna sorotan hasil pencarian di scrollback. */
+const SEARCH_DECORATIONS = {
+  matchBackground: "#3a5468",
+  matchBorder: "#5aa7d8",
+  matchOverviewRuler: "#5aa7d8",
+  activeMatchBackground: "#f2b33d",
+  activeMatchBorder: "#ffd07a",
+  activeMatchColorOverviewRuler: "#f2b33d",
+};
+
 interface Props {
   tab: Tab;
   active: boolean;
@@ -59,6 +71,12 @@ export default function TermView({ tab, active, onStatus, onCwd, onHostKey }: Pr
   const containerRef = useRef<HTMLDivElement>(null);
   const fitRef = useRef<FitAddon | null>(null);
   const connIdRef = useRef<string | null>(null);
+  const termRef = useRef<Terminal | null>(null);
+  const searchRef = useRef<SearchAddon | null>(null);
+  const findInputRef = useRef<HTMLInputElement>(null);
+  /** null = kotak cari tertutup */
+  const [find, setFind] = useState<string | null>(null);
+  const [hits, setHits] = useState<{ index: number; count: number }>({ index: -1, count: 0 });
 
   // Satu lifecycle penuh per attempt: buat terminal, konek, dengarkan, bersihkan.
   useEffect(() => {
@@ -77,9 +95,29 @@ export default function TermView({ tab, active, onStatus, onCwd, onHostKey }: Pr
     const fit = new FitAddon();
     term.loadAddon(fit);
     term.loadAddon(new WebLinksAddon());
+    const search = new SearchAddon();
+    term.loadAddon(search);
+    search.onDidChangeResults(({ resultIndex, resultCount }) =>
+      setHits({ index: resultIndex, count: resultCount }),
+    );
     term.open(el);
+
+    // Renderer WebGL bikin output deras (cat file besar, htop) tetap mulus.
+    // Kalau GPU/driver menolak atau konteksnya hilang di tengah jalan, addon
+    // dibuang dan xterm otomatis kembali ke renderer DOM — jangan sampai
+    // terminal jadi blank hanya karena akselerasi gagal.
+    try {
+      const webgl = new WebglAddon();
+      webgl.onContextLoss(() => webgl.dispose());
+      term.loadAddon(webgl);
+    } catch {
+      // biarkan pakai renderer DOM
+    }
+
     fit.fit();
     fitRef.current = fit;
+    termRef.current = term;
+    searchRef.current = search;
     term.focus();
 
     // Ctrl+C di terminal sudah berarti SIGINT, jadi salin/tempel pakai konvensi
@@ -100,6 +138,11 @@ export default function TermView({ tab, active, onStatus, onCwd, onHostKey }: Pr
             if (id && text) sshSend(id, strToB64(text)).catch(() => {});
           })
           .catch(() => {});
+        return false;
+      }
+      if (e.code === "KeyF") {
+        setFind((f) => f ?? "");
+        // fokus dipindah ke kotak cari oleh efek di bawah
         return false;
       }
       // Ctrl+Shift+W = tutup tab, ditangani shortcut global di App.
@@ -195,6 +238,8 @@ export default function TermView({ tab, active, onStatus, onCwd, onHostKey }: Pr
       const id = connIdRef.current;
       if (id) sshDisconnect(id).catch(() => {});
       connIdRef.current = null;
+      searchRef.current = null;
+      termRef.current = null;
       term.dispose();
     };
     // attempt berubah = sambung ulang penuh
@@ -208,8 +253,81 @@ export default function TermView({ tab, active, onStatus, onCwd, onHostKey }: Pr
     }
   }, [active]);
 
+  // Kotak cari baru dibuka: pindahkan fokus ke sana.
+  useEffect(() => {
+    if (find !== null) findInputRef.current?.focus();
+  }, [find !== null]);
+
+  /** Hapus jejak pencarian: dekorasi DAN seleksi hasil temuan terakhir —
+   *  clearDecorations() saja meninggalkan kata terakhir tetap tersorot. */
+  const clearFindMarks = () => {
+    searchRef.current?.clearDecorations();
+    termRef.current?.clearSelection();
+    setHits({ index: -1, count: 0 });
+  };
+
+  const runFind = (q: string, back = false) => {
+    const opts = { decorations: SEARCH_DECORATIONS };
+    if (!q) {
+      clearFindMarks();
+      return;
+    }
+    if (back) searchRef.current?.findPrevious(q, opts);
+    else searchRef.current?.findNext(q, opts);
+  };
+
+  const closeFind = () => {
+    clearFindMarks();
+    setFind(null);
+    termRef.current?.focus();
+  };
+
   return (
     <div className={"term-pane" + (active ? "" : " term-pane--hidden")}>
+      {find !== null && (
+        <div className="term-find">
+          <input
+            ref={findInputRef}
+            className="term-find-input"
+            placeholder="Cari di riwayat terminal…"
+            spellCheck={false}
+            value={find}
+            onChange={(e) => {
+              setFind(e.target.value);
+              runFind(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.preventDefault();
+                closeFind();
+              } else if (e.key === "Enter") {
+                e.preventDefault();
+                runFind(find, e.shiftKey);
+              }
+            }}
+          />
+          <span className="term-find-count">
+            {find && hits.count === 0
+              ? "tak ada"
+              : hits.count > 0
+                ? `${hits.index + 1}/${hits.count}`
+                : ""}
+          </span>
+          <button
+            className="icon-btn"
+            title="Sebelumnya (Shift+Enter)"
+            onClick={() => runFind(find, true)}
+          >
+            ↑
+          </button>
+          <button className="icon-btn" title="Berikutnya (Enter)" onClick={() => runFind(find)}>
+            ↓
+          </button>
+          <button className="icon-btn" title="Tutup (Esc)" onClick={closeFind}>
+            ✕
+          </button>
+        </div>
+      )}
       <div className="term-host" ref={containerRef} />
     </div>
   );

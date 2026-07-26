@@ -292,6 +292,21 @@ body {
 .add-btn {
   width: 100%;
 }
+.import-btn {
+  width: 100%;
+  margin-top: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 4px 0;
+}
+.import-btn:hover {
+  color: var(--fg);
+  text-decoration: underline;
+}
 
 /* ── Area utama ── */
 .main {
@@ -798,6 +813,39 @@ body {
   height: 100%;
 }
 
+/* Kotak cari scrollback (Ctrl+Shift+F), melayang di kanan atas terminal */
+.term-find {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 5px 6px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+}
+.term-find-input {
+  width: 200px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  padding: 2px 4px;
+}
+.term-find-count {
+  min-width: 44px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
 .term-overlay {
   position: absolute;
   bottom: 24px;
@@ -912,6 +960,65 @@ kbd {
 .modal--danger {
   width: 480px;
   border-color: var(--danger);
+}
+.modal--wide {
+  width: 520px;
+}
+
+/* Dialog impor ~/.ssh/config */
+.imp-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+.imp-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+.imp-row + .imp-row {
+  border-top: 1px solid var(--line);
+}
+.imp-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.imp-row--dup {
+  opacity: 0.6;
+}
+.imp-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.imp-label {
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+.imp-sub {
+  font-size: 11px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.imp-auth,
+.imp-key {
+  opacity: 0.75;
+}
+.imp-badge {
+  flex: 0 0 auto;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 2px 6px;
 }
 
 /* Dialog konfirmasi host key */

@@ -10,6 +10,16 @@ export interface Host {
   keyPath?: string | null;
 }
 
+/** Entri Host hasil baca ~/.ssh/config, belum punya id. */
+export interface ConfigHost {
+  label: string;
+  host: string;
+  port: number;
+  username: string;
+  authType: AuthType;
+  keyPath: string | null;
+}
+
 export interface ConnectParams {
   host: string;
   port: number;

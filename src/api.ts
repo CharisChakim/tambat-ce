@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import type {
+  ConfigHost,
   ConnectError,
   ConnectParams,
   DirListing,
@@ -110,6 +111,9 @@ export const hostkeyTrust = (info: HostKeyInfo) =>
     keyType: info.keyType,
     fingerprint: info.fingerprint,
   });
+
+// ---- Impor dari ~/.ssh/config ----
+export const sshconfigHosts = () => invoke<ConfigHost[]>("sshconfig_hosts");
 
 // ---- Hosts ----
 export const hostsList = () => invoke<Host[]>("hosts_list");
