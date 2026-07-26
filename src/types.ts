@@ -10,6 +10,16 @@ export interface Host {
   keyPath?: string | null;
 }
 
+/** Ukuran panel file yang bisa diatur pengguna, diingat antar sesi. */
+export interface PanelLayout {
+  /** lebar panel keseluruhan, px */
+  width: number;
+  /** lebar kolom Ukuran, px */
+  sizeW: number;
+  /** lebar kolom Terakhir diubah, px */
+  modW: number;
+}
+
 /** Entri Host hasil baca ~/.ssh/config, belum punya id. */
 export interface ConfigHost {
   label: string;

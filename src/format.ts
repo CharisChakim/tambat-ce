@@ -101,16 +101,16 @@ export function fmtDate(epochSeconds: number | null): string {
   return `${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()} ${hh}:${mm}`;
 }
 
-/** Ringkas untuk kolom sempit: tahun ini → "8 Jul 14:32"; tahun lain →
- *  "8 Jul 2024"; null → "". Tanggal lengkap tetap tersedia lewat fmtDate(). */
+/** Ringkas untuk kolom sempit: "26-07-26 22:11" (dd-mm-yy jam:menit); null → "".
+ *  Semua bagian berlebar tetap supaya kolom rata. Tanggal lengkap dengan nama
+ *  bulan tetap tersedia lewat fmtDate() di tooltip. */
 export function fmtDateShort(epochSeconds: number | null): string {
   if (epochSeconds === null) return "";
   const d = new Date(epochSeconds * 1000);
-  const dm = `${d.getDate()} ${BULAN[d.getMonth()]}`;
-  if (d.getFullYear() !== new Date().getFullYear()) return `${dm} ${d.getFullYear()}`;
-  const hh = String(d.getHours()).padStart(2, "0");
-  const mm = String(d.getMinutes()).padStart(2, "0");
-  return `${dm} ${hh}:${mm}`;
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${p(d.getDate())}-${p(d.getMonth() + 1)}-${p(d.getFullYear() % 100)} ${p(
+    d.getHours(),
+  )}:${p(d.getMinutes())}`;
 }
 
 /** "93784 detik" → "1h 2j"; di bawah sehari "2j 3m"; di bawah sejam "42m". */

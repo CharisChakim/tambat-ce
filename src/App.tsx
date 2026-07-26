@@ -17,7 +17,16 @@ import {
   secretGet,
   secretSet,
 } from "./api";
-import type { ConfigHost, Host, HostKeyInfo, SaveMode, Tab, TabStatus } from "./types";
+import { DEFAULT_LAYOUT, normalizeLayout } from "./panelLayout";
+import type {
+  ConfigHost,
+  Host,
+  HostKeyInfo,
+  PanelLayout,
+  SaveMode,
+  Tab,
+  TabStatus,
+} from "./types";
 
 let tabCounter = 0;
 const newTabId = () => `tab-${++tabCounter}`;
@@ -46,10 +55,13 @@ export default function App() {
   /** konfirmasi fingerprint server yang belum dipercaya, untuk tab tertentu */
   const [hostKey, setHostKey] = useState<{ tabId: string; info: HostKeyInfo } | null>(null);
   const [showImport, setShowImport] = useState(false);
-  /** lebar panel file, dibagi semua tab dan diingat antar sesi */
-  const [panelWidth, setPanelWidth] = useState(() => {
-    const saved = Number(localStorage.getItem("tambat.panelWidth"));
-    return saved >= 240 && saved <= 720 ? saved : 320;
+  /** ukuran panel file, dibagi semua tab dan diingat antar sesi */
+  const [panelLayout, setPanelLayout] = useState<PanelLayout>(() => {
+    try {
+      return normalizeLayout(JSON.parse(localStorage.getItem("tambat.panelLayout") ?? ""));
+    } catch {
+      return DEFAULT_LAYOUT;
+    }
   });
 
   useEffect(() => {
@@ -57,8 +69,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("tambat.panelWidth", String(panelWidth));
-  }, [panelWidth]);
+    localStorage.setItem("tambat.panelLayout", JSON.stringify(panelLayout));
+  }, [panelLayout]);
 
   // Shortcut: "/" fokus ke pencarian, Ctrl+W tutup tab aktif
   useEffect(() => {
@@ -298,8 +310,8 @@ export default function App() {
                   tab={t}
                   active={t.tabId === activeTab}
                   cwd={cwd[t.tabId]}
-                  width={panelWidth}
-                  onWidthChange={setPanelWidth}
+                  layout={panelLayout}
+                  onLayoutChange={setPanelLayout}
                 />
               )}
               <div className="workspace-term">

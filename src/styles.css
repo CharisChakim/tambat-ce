@@ -515,16 +515,35 @@ body.resizing-col {
 .fentry-head,
 .fentry {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 60px 92px;
+  /* --cols diisi FilePanel supaya lebar kolom bisa diseret pengguna */
+  grid-template-columns: var(--cols, minmax(0, 1fr) 64px 104px);
   align-items: center;
   gap: 8px;
 }
+/* Pembatas kolom yang bisa diseret, di header */
+.col-grip {
+  position: absolute;
+  top: 0;
+  bottom: 2px;
+  width: 9px;
+  cursor: col-resize;
+}
+.col-grip:hover {
+  background: linear-gradient(
+    to right,
+    transparent 4px,
+    var(--lamp) 4px,
+    var(--lamp) 5px,
+    transparent 5px
+  );
+}
 .fentry-head {
+  position: relative;
   padding: 2px 7px 6px;
   font-size: 10.5px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--muted);
+  color: var(--text);
   border-bottom: 1px solid var(--line);
   margin-bottom: 2px;
 }
@@ -537,9 +556,11 @@ body.resizing-col {
   border-radius: 6px;
   font-family: var(--mono);
   font-size: 12.5px;
-  color: var(--muted);
+  color: var(--text);
   cursor: pointer;
 }
+/* Folder dan file sama-sama putih penuh; pembedanya ikon, bukan warna teks.
+   Sebelumnya file justru yang diredupkan sehingga paling sulit dibaca. */
 .fentry--dir {
   color: var(--text);
 }
@@ -613,7 +634,7 @@ body.resizing-col {
 }
 .fentry-size,
 .fentry-modified {
-  color: #62798a;
+  color: var(--muted);
   font-size: 11px;
   text-align: right;
   white-space: nowrap;

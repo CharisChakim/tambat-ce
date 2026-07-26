@@ -27,7 +27,8 @@ import {
   joinPath,
   splitName,
 } from "../format";
-import type { DirEntry, DirListing, ServerStats, Tab } from "../types";
+import { boundsFor } from "../panelLayout";
+import type { DirEntry, DirListing, PanelLayout, ServerStats, Tab } from "../types";
 import FileAskDialog, { type AskState } from "./FileAskDialog";
 import FileContextMenu from "./FileContextMenu";
 import FileIcon from "./FileIcon";
@@ -86,22 +87,18 @@ const IconDelete = (
   </svg>
 );
 
-/** Batas lebar panel saat diseret, px. */
-const MIN_W = 240;
-const MAX_W = 720;
-
 interface Props {
   tab: Tab;
   active: boolean;
   /** direktori kerja shell saat ini (dari OSC 7 terminal); panel mengikutinya */
   cwd?: string;
-  width: number;
-  onWidthChange: (w: number) => void;
+  layout: PanelLayout;
+  onLayoutChange: (l: PanelLayout) => void;
 }
 
 /** Panel ala MobaXterm: file browser SFTP + statistik server (RAM, disk,
  *  suhu, baterai, ping). Memakai sesi SSH kedua, terpisah dari terminal. */
-export default function FilePanel({ tab, active, cwd, width, onWidthChange }: Props) {
+export default function FilePanel({ tab, active, cwd, layout, onLayoutChange }: Props) {
   const panelId = `panel-${tab.tabId}-${tab.attempt}`;
   const [listing, setListing] = useState<DirListing | null>(null);
   const [pathInput, setPathInput] = useState("");
@@ -327,30 +324,48 @@ export default function FilePanel({ tab, active, cwd, width, onWidthChange }: Pr
     navigator.clipboard?.writeText(s).catch(() => {});
   };
 
-  /** Seret tepi kanan panel untuk mengubah lebarnya. */
-  const startResize = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const startX = e.clientX;
-    const startW = width;
-    const onMove = (ev: MouseEvent) =>
-      onWidthChange(Math.min(MAX_W, Math.max(MIN_W, startW + ev.clientX - startX)));
-    const onUp = () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-      document.body.classList.remove("resizing-col");
+  /** Seret salah satu ukuran panel. `sign` -1 untuk pembatas kolom, karena
+   *  menariknya ke kiri berarti kolom di kanannya melebar. */
+  const startDrag =
+    (key: keyof PanelLayout, sign: 1 | -1) => (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const startX = e.clientX;
+      const start = layout[key];
+      const [min, max] = boundsFor(key, layout);
+      const onMove = (ev: MouseEvent) => {
+        const next = start + sign * (ev.clientX - startX);
+        onLayoutChange({ ...layout, [key]: Math.min(max, Math.max(min, next)) });
+      };
+      const onUp = () => {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+        document.body.classList.remove("resizing-col");
+      };
+      document.body.classList.add("resizing-col");
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
     };
-    document.body.classList.add("resizing-col");
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-  };
 
   const grip = (
-    <div className="fpanel-grip" title="Tarik untuk mengubah lebar panel" onMouseDown={startResize} />
+    <div
+      className="fpanel-grip"
+      title="Tarik untuk mengubah lebar panel"
+      onMouseDown={startDrag("width", 1)}
+    />
   );
+
+  /** Kolom dibagikan ke header dan semua baris lewat satu custom property. */
+  const colStyle = {
+    "--cols": `minmax(0, 1fr) ${layout.sizeW}px ${layout.modW}px`,
+  } as React.CSSProperties;
+  /** Jarak pembatas kolom dari tepi kanan daftar (padding 7px + gap 8px). */
+  const gripRightMod = 7 + layout.modW + 4;
+  const gripRightSize = gripRightMod + 4 + layout.sizeW + 4;
 
   if (error && !listing) {
     return (
-      <aside className="fpanel" style={{ width, minWidth: width }}>
+      <aside className="fpanel" style={{ width: layout.width, minWidth: layout.width }}>
         <div className="fpanel-msg">
           <p className="fpanel-err">{error}</p>
           <button className="btn" onClick={() => setRetry((r) => r + 1)}>
@@ -369,7 +384,7 @@ export default function FilePanel({ tab, active, cwd, width, onWidthChange }: Pr
     : null;
 
   return (
-    <aside className="fpanel" style={{ width, minWidth: width }}>
+    <aside className="fpanel" style={{ width: layout.width, minWidth: layout.width }}>
       <div className="fpanel-nav">
         <button
           className="icon-btn"
@@ -436,6 +451,7 @@ export default function FilePanel({ tab, active, cwd, width, onWidthChange }: Pr
 
       <div
         className={"fpanel-list" + (dragOver ? " fpanel-list--dragover" : "")}
+        style={colStyle}
         onContextMenu={(e) => {
           e.preventDefault();
           if (listing) setMenu({ x: e.clientX, y: e.clientY, entry: null });
@@ -447,7 +463,19 @@ export default function FilePanel({ tab, active, cwd, width, onWidthChange }: Pr
           <div className="fentry-head">
             <span>Nama</span>
             <span className="fentry-head-size">Ukuran</span>
-            <span className="fentry-head-modified">Dimodifikasi</span>
+            <span className="fentry-head-modified">Terakhir diubah</span>
+            <div
+              className="col-grip"
+              style={{ right: gripRightSize }}
+              title="Tarik untuk mengubah lebar kolom Ukuran"
+              onMouseDown={startDrag("sizeW", -1)}
+            />
+            <div
+              className="col-grip"
+              style={{ right: gripRightMod }}
+              title="Tarik untuk mengubah lebar kolom Terakhir diubah"
+              onMouseDown={startDrag("modW", -1)}
+            />
           </div>
         )}
         {listing?.entries.map((en) => {
