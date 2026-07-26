@@ -7,13 +7,16 @@ import "@xterm/xterm/css/xterm.css";
 import {
   b64ToBytes,
   connectParamsFor,
+  copyToClipboard,
+  errText,
+  hostKeyError,
   sshConnect,
   sshDisconnect,
   sshResize,
   sshSend,
   strToB64,
 } from "../api";
-import type { Tab, TabStatus } from "../types";
+import type { HostKeyInfo, Tab, TabStatus } from "../types";
 
 const TERM_THEME = {
   background: "#0b141a",
@@ -48,9 +51,11 @@ interface Props {
   onStatus: (tabId: string, status: TabStatus, message?: string) => void;
   /** dipanggil setiap shell melaporkan direktori kerja baru (lihat OSC7_RE) */
   onCwd?: (path: string) => void;
+  /** server menolak diverifikasi otomatis: minta keputusan pengguna */
+  onHostKey: (tabId: string, info: HostKeyInfo) => void;
 }
 
-export default function TermView({ tab, active, onStatus, onCwd }: Props) {
+export default function TermView({ tab, active, onStatus, onCwd, onHostKey }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const fitRef = useRef<FitAddon | null>(null);
   const connIdRef = useRef<string | null>(null);
@@ -77,6 +82,31 @@ export default function TermView({ tab, active, onStatus, onCwd }: Props) {
     fitRef.current = fit;
     term.focus();
 
+    // Ctrl+C di terminal sudah berarti SIGINT, jadi salin/tempel pakai konvensi
+    // terminal: Ctrl+Shift+C / Ctrl+Shift+V. Ctrl+V biasa tetap jalan lewat
+    // penanganan event `paste` bawaan xterm. Kembalikan false = jangan teruskan
+    // tombolnya ke server.
+    term.attachCustomKeyEventHandler((e) => {
+      if (e.type !== "keydown" || !e.ctrlKey || !e.shiftKey) return true;
+      if (e.code === "KeyC") {
+        copyToClipboard(term.getSelection());
+        return false;
+      }
+      if (e.code === "KeyV") {
+        navigator.clipboard
+          ?.readText()
+          .then((text) => {
+            const id = connIdRef.current;
+            if (id && text) sshSend(id, strToB64(text)).catch(() => {});
+          })
+          .catch(() => {});
+        return false;
+      }
+      // Ctrl+Shift+W = tutup tab, ditangani shortcut global di App.
+      if (e.code === "KeyW") return false;
+      return true;
+    });
+
     const oscHandler = term.parser.registerOscHandler(7, (data) => {
       const m = OSC7_RE.exec(data);
       if (m) onCwd?.(m[1]);
@@ -86,6 +116,15 @@ export default function TermView({ tab, active, onStatus, onCwd }: Props) {
     let disposed = false;
     let unData: UnlistenFn | null = null;
     let unExit: UnlistenFn | null = null;
+
+    // Input ditahan selagi sesi belum siap, lalu dikirim sekaligus. Tanpa ini,
+    // apa pun yang diketik sebelum handshake selesai hilang tanpa jejak.
+    let pending = "";
+    term.onData((data) => {
+      const id = connIdRef.current;
+      if (id) sshSend(id, strToB64(data)).catch(() => {});
+      else pending += data;
+    });
 
     term.writeln(
       `\x1b[38;5;109mtambat →\x1b[0m menghubungkan ke \x1b[1m${tab.host.username}@${tab.host.host}:${tab.host.port}\x1b[0m ...`,
@@ -114,17 +153,29 @@ export default function TermView({ tab, active, onStatus, onCwd }: Props) {
         connIdRef.current = connId;
         onStatus(tab.tabId, "open");
 
-        term.onData((data) => {
-          const id = connIdRef.current;
-          if (id) sshSend(id, strToB64(data)).catch(() => {});
-        });
+        if (pending) {
+          sshSend(connId, strToB64(pending)).catch(() => {});
+          pending = "";
+        }
+
         term.onResize(({ cols, rows }) => {
           const id = connIdRef.current;
           if (id) sshResize(id, cols, rows).catch(() => {});
         });
       } catch (err) {
         if (disposed) return;
-        const msg = String(err);
+        // Host key belum dipercaya: bukan galat koneksi, tapi keputusan pengguna.
+        // App menampilkan dialog fingerprint lalu menyambung ulang bila disetujui.
+        const hk = hostKeyError(err);
+        if (hk) {
+          term.writeln(
+            `\r\n\x1b[33mtambat →\x1b[0m identitas server perlu dikonfirmasi sebelum kredensial dikirim.`,
+          );
+          onStatus(tab.tabId, "error");
+          onHostKey(tab.tabId, hk);
+          return;
+        }
+        const msg = errText(err);
         term.writeln(`\r\n\x1b[31mgagal:\x1b[0m ${msg}`);
         onStatus(tab.tabId, "error", msg);
       }

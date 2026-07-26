@@ -22,6 +22,22 @@ export interface ConnectParams {
   rows: number;
 }
 
+/** Identitas server yang dilaporkan backend saat host key belum dipercaya. */
+export interface HostKeyInfo {
+  host: string;
+  port: number;
+  keyType: string;
+  /** format "SHA256:..." — sama dengan keluaran `ssh-keygen -lf` */
+  fingerprint: string;
+  /** fingerprint yang tersimpan; ada = key BERUBAH (bahaya), null = host baru */
+  stored: string | null;
+}
+
+/** Galat dari `ssh_connect` / `panel_open`. */
+export type ConnectError =
+  | { kind: "hostKey"; info: HostKeyInfo }
+  | { kind: "other"; message: string };
+
 export type TabStatus = "connecting" | "open" | "closed" | "error";
 
 /** Perlakuan rahasia setelah diketik: sekali pakai, selama app berjalan, atau permanen di keyring */

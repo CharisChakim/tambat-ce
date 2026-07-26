@@ -32,10 +32,14 @@ fn read_all(app: &AppHandle) -> Result<Vec<Host>, String> {
     serde_json::from_str(&raw).map_err(|e| format!("hosts.json rusak: {}", e))
 }
 
+/// Tulis lewat berkas sementara lalu rename: kalau proses mati di tengah
+/// penyimpanan, hosts.json lama tetap utuh alih-alih tertulis separuh.
 fn write_all(app: &AppHandle, hosts: &[Host]) -> Result<(), String> {
     let path = hosts_file(app)?;
+    let tmp = path.with_extension("json.tmp");
     let raw = serde_json::to_string_pretty(hosts).map_err(|e| e.to_string())?;
-    fs::write(&path, raw).map_err(|e| e.to_string())
+    fs::write(&tmp, raw).map_err(|e| e.to_string())?;
+    fs::rename(&tmp, &path).map_err(|e| e.to_string())
 }
 
 #[tauri::command]

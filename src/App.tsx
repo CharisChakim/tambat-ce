@@ -3,9 +3,11 @@ import Sidebar from "./components/Sidebar";
 import Logo from "./components/Logo";
 import FilePanel from "./components/FilePanel";
 import HostForm from "./components/HostForm";
+import HostKeyPrompt from "./components/HostKeyPrompt";
 import SecretPrompt from "./components/SecretPrompt";
 import TermView from "./components/TermView";
 import {
+  hostkeyTrust,
   hostsDelete,
   hostsList,
   hostsSave,
@@ -14,7 +16,7 @@ import {
   secretGet,
   secretSet,
 } from "./api";
-import type { Host, SaveMode, Tab, TabStatus } from "./types";
+import type { Host, HostKeyInfo, SaveMode, Tab, TabStatus } from "./types";
 
 let tabCounter = 0;
 const newTabId = () => `tab-${++tabCounter}`;
@@ -40,6 +42,8 @@ export default function App() {
   const [prompt, setPrompt] = useState<{ host: Host; kind: "password" | "passphrase" } | null>(
     null,
   );
+  /** konfirmasi fingerprint server yang belum dipercaya, untuk tab tertentu */
+  const [hostKey, setHostKey] = useState<{ tabId: string; info: HostKeyInfo } | null>(null);
 
   useEffect(() => {
     hostsList().then(setHosts).catch(console.error);
@@ -57,7 +61,9 @@ export default function App() {
         setSidebarCollapsed(false); // pastikan kotak cari terlihat sebelum difokus
         setTimeout(() => document.getElementById("host-search")?.focus(), 0);
       }
-      if (e.key === "w" && e.ctrlKey && e.shiftKey && activeTab) {
+      // Cocokkan lewat e.code, bukan e.key: dengan Shift ditekan, e.key jadi "W"
+      // (huruf besar) sehingga perbandingan terhadap "w" tak pernah terpenuhi.
+      if (e.code === "KeyW" && e.ctrlKey && e.shiftKey && activeTab) {
         e.preventDefault();
         closeTab(activeTab);
       }
@@ -129,6 +135,27 @@ export default function App() {
     }
   };
 
+  /** Sambung ulang tab dengan kredensial yang sudah ada (remount TermView). */
+  const reconnectTab = (tabId: string) =>
+    setTabs((ts) =>
+      ts.map((t) =>
+        t.tabId === tabId ? { ...t, status: "connecting", attempt: t.attempt + 1 } : t,
+      ),
+    );
+
+  const onHostKeyTrust = async () => {
+    if (!hostKey) return;
+    const { tabId, info } = hostKey;
+    setHostKey(null);
+    try {
+      await hostkeyTrust(info);
+      reconnectTab(tabId);
+    } catch (e) {
+      console.error(e);
+      onStatus(tabId, "error", String(e));
+    }
+  };
+
   const retryTab = (tabId: string) => {
     const tab = tabs.find((t) => t.tabId === tabId);
     if (!tab) return;
@@ -141,13 +168,7 @@ export default function App() {
         kind: tab.host.authType === "password" ? "password" : "passphrase",
       });
     } else {
-      setTabs((ts) =>
-        ts.map((t) =>
-          t.tabId === tabId
-            ? { ...t, status: "connecting", attempt: t.attempt + 1 }
-            : t,
-        ),
-      );
+      reconnectTab(tabId);
     }
   };
 
@@ -258,20 +279,23 @@ export default function App() {
                   active={t.tabId === activeTab}
                   onStatus={onStatus}
                   onCwd={(path) => setCwd((c) => (c[t.tabId] === path ? c : { ...c, [t.tabId]: path }))}
+                  onHostKey={(tabId, info) => setHostKey({ tabId, info })}
                 />
               </div>
             </div>
           ))}
-          {active && (active.status === "closed" || active.status === "error") && (
-            <div className="term-overlay">
-              <button className="btn btn--primary" onClick={() => retryTab(active.tabId)}>
-                Sambung ulang
-              </button>
-              <button className="btn" onClick={() => closeTab(active.tabId)}>
-                Tutup tab
-              </button>
-            </div>
-          )}
+          {active &&
+            (active.status === "closed" || active.status === "error") &&
+            hostKey?.tabId !== active.tabId && (
+              <div className="term-overlay">
+                <button className="btn btn--primary" onClick={() => retryTab(active.tabId)}>
+                  Sambung ulang
+                </button>
+                <button className="btn" onClick={() => closeTab(active.tabId)}>
+                  Tutup tab
+                </button>
+              </div>
+            )}
         </div>
       </main>
 
@@ -280,6 +304,13 @@ export default function App() {
           initial={formHost}
           onSave={saveHost}
           onClose={() => setFormHost(undefined)}
+        />
+      )}
+      {hostKey && (
+        <HostKeyPrompt
+          info={hostKey.info}
+          onTrust={onHostKeyTrust}
+          onReject={() => setHostKey(null)}
         />
       )}
       {prompt && (

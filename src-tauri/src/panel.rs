@@ -6,9 +6,9 @@ use std::path::Path;
 use std::sync::mpsc::{channel, Sender};
 use std::sync::Mutex;
 use std::time::Duration;
-use tauri::State;
+use tauri::{AppHandle, State};
 
-use crate::ssh::{auth, connect_tcp, ConnectParams};
+use crate::ssh::{open_session, ConnectError, ConnectParams};
 
 /// Sesi SSH kedua per tab, khusus untuk file browser (SFTP) dan statistik
 /// server, agar tidak mengganggu aliran data terminal.
@@ -555,28 +555,23 @@ fn open_local(path: &Path, force_text: bool) -> Result<(), String> {
 /// memproses perintah List/Stats secara berurutan pada sesi blocking.
 #[tauri::command]
 pub async fn panel_open(
+    app: AppHandle,
     state: State<'_, PanelState>,
     id: String,
     params: ConnectParams,
-) -> Result<(), String> {
+) -> Result<(), ConnectError> {
     if id.is_empty() || state.conns.lock().unwrap().contains_key(&id) {
         return Err("Id panel tidak valid".into());
     }
 
     let (sess, sftp) = tauri::async_runtime::spawn_blocking(move || {
-        let tcp = connect_tcp(&params.host, params.port)?;
-        tcp.set_nodelay(true).ok();
-        let mut sess = Session::new().map_err(|e| e.to_string())?;
-        sess.set_tcp_stream(tcp);
-        sess.handshake()
-            .map_err(|e| format!("Handshake SSH gagal: {}", e))?;
-        auth(&sess, &params)?;
+        let sess = open_session(&app, &params)?;
         // Batasi operasi blocking agar worker tidak macet selamanya.
         sess.set_timeout(15_000);
         let sftp = sess
             .sftp()
             .map_err(|e| format!("Gagal membuka SFTP: {}", e))?;
-        Ok::<_, String>((sess, sftp))
+        Ok::<_, ConnectError>((sess, sftp))
     })
     .await
     .map_err(|e| e.to_string())??;

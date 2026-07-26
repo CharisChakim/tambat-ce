@@ -1,6 +1,30 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import type { ConnectParams, DirListing, Host, ServerStats, Tab } from "./types";
+import type {
+  ConnectError,
+  ConnectParams,
+  DirListing,
+  Host,
+  HostKeyInfo,
+  ServerStats,
+  Tab,
+} from "./types";
+
+/** Galat host key (fingerprint belum dipercaya / berubah), atau null jika bukan itu. */
+export function hostKeyError(e: unknown): HostKeyInfo | null {
+  const ce = e as ConnectError | null;
+  return ce && typeof ce === "object" && ce.kind === "hostKey" ? ce.info : null;
+}
+
+/** Pesan galat yang bisa dibaca, dari `String` maupun `ConnectError`. */
+export function errText(e: unknown): string {
+  if (typeof e === "string") return e;
+  const ce = e as ConnectError | null;
+  if (ce && typeof ce === "object" && ce.kind === "other") return ce.message;
+  if (ce && typeof ce === "object" && ce.kind === "hostKey")
+    return `Host key ${ce.info.host} belum dipercaya`;
+  return String(e);
+}
 
 /** Parameter koneksi dari sebuah tab: kredensial yang dikirim tergantung authType-nya. */
 export function connectParamsFor(tab: Tab, cols: number, rows: number): ConnectParams {
@@ -78,11 +102,50 @@ export const secretGet = (id: string) =>
 export const secretDelete = (id: string) =>
   invoke<void>("secret_delete", { id });
 
+// ---- Host key yang dipercaya ----
+export const hostkeyTrust = (info: HostKeyInfo) =>
+  invoke<void>("hostkey_trust", {
+    host: info.host,
+    port: info.port,
+    keyType: info.keyType,
+    fingerprint: info.fingerprint,
+  });
+
 // ---- Hosts ----
 export const hostsList = () => invoke<Host[]>("hosts_list");
 export const hostsSave = (host: Host) => invoke<Host[]>("hosts_save", { host });
 export const hostsDelete = (id: string) =>
   invoke<Host[]>("hosts_delete", { id });
+
+// ---- Clipboard ----
+/** Fallback lewat textarea sementara: `navigator.clipboard` butuh secure context
+ *  dan tidak selalu tersedia di webview Linux (WebKitGTK). Harus dipanggil dari
+ *  dalam event gesture pengguna agar execCommand diizinkan. */
+function copyFallback(text: string): void {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.top = "-1000px";
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand("copy");
+  } finally {
+    ta.remove();
+  }
+}
+
+/** Salin teks ke clipboard sistem, dengan fallback bila Clipboard API tak ada. */
+export function copyToClipboard(text: string): void {
+  if (!text) return;
+  const viaApi = navigator.clipboard?.writeText(text);
+  if (viaApi) {
+    viaApi.catch(() => copyFallback(text));
+    return;
+  }
+  copyFallback(text);
+}
 
 // ---- Base64 <-> bytes ----
 export function b64ToBytes(b64: string): Uint8Array {

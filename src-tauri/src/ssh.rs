@@ -1,5 +1,6 @@
+use crate::hostkeys::{self, HostKeyInfo, Verdict};
 use base64::{engine::general_purpose::STANDARD as B64, Engine as _};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use ssh2::{PtyModeOpcode, PtyModes, Session};
 use std::collections::HashMap;
 use std::io::{Read, Write};
@@ -38,6 +39,60 @@ pub struct ConnectParams {
     pub rows: u32,
 }
 
+/// Kegagalan membuka koneksi. `HostKey` dipisahkan dari galat biasa supaya
+/// frontend bisa menampilkan dialog konfirmasi fingerprint alih-alih pesan galat.
+#[derive(Serialize)]
+#[serde(tag = "kind", rename_all = "camelCase")]
+pub enum ConnectError {
+    HostKey { info: HostKeyInfo },
+    Other { message: String },
+}
+
+impl From<String> for ConnectError {
+    fn from(message: String) -> Self {
+        ConnectError::Other { message }
+    }
+}
+
+impl From<&str> for ConnectError {
+    fn from(message: &str) -> Self {
+        ConnectError::Other {
+            message: message.to_string(),
+        }
+    }
+}
+
+/// Interval keepalive (detik). Tanpa ini, NAT/firewall memutus sesi yang diam
+/// dan pengguna hanya melihat "Koneksi ditutup" tanpa sebab.
+const KEEPALIVE_S: u32 = 30;
+
+/// TCP → handshake → verifikasi host key → keepalive → auth.
+///
+/// Verifikasi host key sengaja berada SEBELUM `auth`: kalau identitas server
+/// belum terbukti, password/passphrase tidak boleh sampai terkirim.
+pub(crate) fn open_session(
+    app: &AppHandle,
+    p: &ConnectParams,
+) -> Result<Session, ConnectError> {
+    let host = normalize_host(&p.host).to_string();
+    let tcp = connect_tcp(&host, p.port)?;
+    tcp.set_nodelay(true).ok();
+
+    let mut sess = Session::new().map_err(|e| e.to_string())?;
+    sess.set_tcp_stream(tcp);
+    sess.handshake()
+        .map_err(|e| format!("Handshake SSH gagal: {}", e))?;
+
+    match hostkeys::verify(app, &sess, &host, p.port)? {
+        Verdict::Trusted => {}
+        Verdict::Untrusted(info) => return Err(ConnectError::HostKey { info }),
+    }
+
+    sess.set_keepalive(true, KEEPALIVE_S);
+    auth(&sess, p)?;
+    Ok(sess)
+}
+
 /// Expand "~/..." ke direktori home agar path seperti ~/.ssh/id_ed25519 berfungsi.
 fn expand_tilde(path: &str) -> PathBuf {
     if let Some(rest) = path.strip_prefix("~/") {
@@ -53,7 +108,10 @@ fn expand_tilde(path: &str) -> PathBuf {
 fn normalize_host(host: &str) -> &str {
     let h = host.trim();
     let h = h.split_once("://").map_or(h, |(_, rest)| rest);
-    h.split(['/', '?', '#']).next().unwrap_or(h)
+    let h = h.split(['/', '?', '#']).next().unwrap_or(h);
+    // IPv6 literal biasa ditulis dalam kurung siku ala URL ("[::1]"), tapi
+    // to_socket_addrs mengharapkan alamat polos ("::1").
+    h.strip_prefix('[').and_then(|r| r.strip_suffix(']')).unwrap_or(h)
 }
 
 /// Coba semua alamat hasil resolve (IPv4/IPv6) sampai satu berhasil.
@@ -135,21 +193,14 @@ pub async fn ssh_connect(
     state: State<'_, SshState>,
     id: String,
     params: ConnectParams,
-) -> Result<(), String> {
+) -> Result<(), ConnectError> {
     if id.is_empty() || state.conns.lock().unwrap().contains_key(&id) {
         return Err("Id sesi tidak valid".into());
     }
 
+    let app_conn = app.clone();
     let (sess, mut ch) = tauri::async_runtime::spawn_blocking(move || {
-        let tcp = connect_tcp(&params.host, params.port)?;
-        tcp.set_nodelay(true).ok();
-
-        let mut sess = Session::new().map_err(|e| e.to_string())?;
-        sess.set_tcp_stream(tcp);
-        sess.handshake()
-            .map_err(|e| format!("Handshake SSH gagal: {}", e))?;
-
-        auth(&sess, &params)?;
+        let sess = open_session(&app_conn, &params)?;
 
         let mut ch = sess
             .channel_session()
@@ -184,7 +235,7 @@ pub async fn ssh_connect(
 
         // Setelah shell siap, pindah ke mode non-blocking untuk loop IO.
         sess.set_blocking(false);
-        Ok::<_, String>((sess, ch))
+        Ok::<_, ConnectError>((sess, ch))
     })
     .await
     .map_err(|e| e.to_string())??;
@@ -292,6 +343,30 @@ mod tests {
         assert_eq!(normalize_host("  192.168.1.10  "), "192.168.1.10");
         assert_eq!(normalize_host("example.com/path?x=1"), "example.com");
         assert_eq!(normalize_host("example.com"), "example.com");
+    }
+
+    #[test]
+    fn normalisasi_ipv6_literal() {
+        assert_eq!(normalize_host("[::1]"), "::1");
+        assert_eq!(normalize_host("  [2001:db8::42]  "), "2001:db8::42");
+        assert_eq!(normalize_host("ssh://[fe80::1]/"), "fe80::1");
+        // tanpa kurung siku sudah dapat di-resolve apa adanya
+        assert_eq!(normalize_host("::1"), "::1");
+    }
+
+    /// Alamat IPv6 literal harus lolos sampai ke resolusi soket, bukan ditolak
+    /// dengan "Alamat tidak valid" seperti sebelum kurung sikunya dilepas.
+    #[test]
+    fn ipv6_literal_dapat_diresolve() {
+        use std::net::ToSocketAddrs;
+        assert!(
+            (normalize_host("[::1]"), 22u16).to_socket_addrs().is_ok(),
+            "IPv6 literal dalam kurung siku harus bisa di-resolve"
+        );
+        assert!(
+            ("[::1]", 22u16).to_socket_addrs().is_err(),
+            "prasyarat: bentuk berkurung siku memang ditolak to_socket_addrs"
+        );
     }
 }
 

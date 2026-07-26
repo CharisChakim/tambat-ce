@@ -909,6 +909,60 @@ kbd {
 .modal--narrow {
   width: 360px;
 }
+.modal--danger {
+  width: 480px;
+  border-color: var(--danger);
+}
+
+/* Dialog konfirmasi host key */
+.hk-note,
+.hk-warn {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.hk-note {
+  color: var(--muted);
+}
+.hk-warn {
+  color: var(--danger);
+}
+.hk-note code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+.hk-keys {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+.hk-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.hk-label {
+  flex: 0 0 76px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.hk-fp {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.hk-fp--old {
+  color: var(--muted);
+  text-decoration: line-through;
+}
 .modal-title {
   margin: 0 0 4px;
   font-size: 15px;

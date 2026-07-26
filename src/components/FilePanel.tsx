@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 import {
   connectParamsFor,
+  errText,
   panelClose,
   panelDelete,
   panelDownload,
@@ -160,7 +161,7 @@ export default function FilePanel({ tab, active, cwd }: Props) {
         await poll();
         if (!disposed) timer = window.setInterval(poll, POLL_MS);
       } catch (e) {
-        if (!disposed) setError(String(e));
+        if (!disposed) setError(errText(e));
       }
     })();
 

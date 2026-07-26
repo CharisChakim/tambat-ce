@@ -1,3 +1,4 @@
+mod hostkeys;
 mod hosts;
 mod panel;
 mod secrets;
@@ -17,6 +18,7 @@ pub fn run() {
             hosts::hosts_list,
             hosts::hosts_save,
             hosts::hosts_delete,
+            hostkeys::hostkey_trust,
             panel::panel_open,
             panel::panel_list,
             panel::panel_stats,
