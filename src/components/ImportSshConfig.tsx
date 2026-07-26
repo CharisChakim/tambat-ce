@@ -52,22 +52,23 @@ export default function ImportSshConfig({ existing, onImport, onClose }: Props) 
   return (
     <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal modal--wide">
-        <h2 className="modal-title">Impor dari ~/.ssh/config</h2>
+        <h2 className="modal-title">Impor host dari komputer ini</h2>
 
         {err && <div className="form-err">{err}</div>}
-        {!entries && !err && <p className="modal-text">membaca ~/.ssh/config…</p>}
+        {!entries && !err && <p className="modal-text">membaca pengaturan SSH…</p>}
         {entries?.length === 0 && (
           <p className="modal-text">
-            Tidak ada entri Host yang bisa diimpor. Blok berpola wildcard (<code>Host *</code>)
-            dilewati karena hanya berisi setelan default, bukan server.
+            Tidak ada server yang bisa diimpor dari <code>~/.ssh/config</code> — berkas pengaturan
+            SSH di komputer ini. Entri berpola bintang (<code>Host *</code>) dilewati karena itu
+            setelan umum, bukan server tertentu.
           </p>
         )}
 
         {entries && entries.length > 0 && (
           <>
             <p className="modal-text">
-              <code>Include</code> dan <code>Match</code> tidak diikuti. Hanya HostName, User,
-              Port, dan IdentityFile yang dibaca.
+              Server berikut tercatat di <code>~/.ssh/config</code>, berkas pengaturan SSH di
+              komputer ini. Centang yang mau ditambahkan ke daftar host Tambat.
             </p>
             <div className="imp-list">
               {entries.map((e) => {

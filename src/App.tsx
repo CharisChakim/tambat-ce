@@ -46,10 +46,19 @@ export default function App() {
   /** konfirmasi fingerprint server yang belum dipercaya, untuk tab tertentu */
   const [hostKey, setHostKey] = useState<{ tabId: string; info: HostKeyInfo } | null>(null);
   const [showImport, setShowImport] = useState(false);
+  /** lebar panel file, dibagi semua tab dan diingat antar sesi */
+  const [panelWidth, setPanelWidth] = useState(() => {
+    const saved = Number(localStorage.getItem("tambat.panelWidth"));
+    return saved >= 240 && saved <= 720 ? saved : 320;
+  });
 
   useEffect(() => {
     hostsList().then(setHosts).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tambat.panelWidth", String(panelWidth));
+  }, [panelWidth]);
 
   // Shortcut: "/" fokus ke pencarian, Ctrl+W tutup tab aktif
   useEffect(() => {
@@ -285,7 +294,13 @@ export default function App() {
               }
             >
               {showPanel && t.status === "open" && (
-                <FilePanel tab={t} active={t.tabId === activeTab} cwd={cwd[t.tabId]} />
+                <FilePanel
+                  tab={t}
+                  active={t.tabId === activeTab}
+                  cwd={cwd[t.tabId]}
+                  width={panelWidth}
+                  onWidthChange={setPanelWidth}
+                />
               )}
               <div className="workspace-term">
                 <TermView

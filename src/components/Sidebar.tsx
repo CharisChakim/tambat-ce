@@ -13,8 +13,26 @@ interface Props {
   onImport: () => void;
 }
 
-/** Huruf awal label (atau host) untuk lencana rail. */
-const initialOf = (h: Host) => (h.label || h.host).trim().charAt(0).toUpperCase() || "?";
+/** Dua huruf untuk lencana rail: inisial dua kata pertama ("web-prod" → "WP"),
+ *  atau dua huruf awal kalau cuma satu kata ("bastion" → "BA"). Satu huruf saja
+ *  bikin host berbeda tampak identik saat sidebar menciut. */
+const badgeOf = (h: Host) => {
+  const src = (h.label || h.host).trim();
+  if (!src) return "?";
+  const words = src.split(/[\s._\-@:/]+/).filter(Boolean);
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return src.slice(0, 2).toUpperCase();
+};
+
+/** Warna tetap per tujuan koneksi, supaya dua lencana berhuruf sama tetap
+ *  bisa dibedakan sekilas. */
+const hueOf = (h: Host) => {
+  let n = 7;
+  for (const ch of `${h.username}@${h.host}:${h.port}`) {
+    n = (n * 31 + ch.charCodeAt(0)) % 360;
+  }
+  return n;
+};
 
 export default function Sidebar({
   hosts,
@@ -49,10 +67,16 @@ export default function Sidebar({
             <button
               key={h.id}
               className="host-rail"
-              title={`Sambungkan ke ${h.username}@${h.host}`}
+              title={`${h.label || h.host} — sambungkan ke ${h.username}@${h.host}${
+                h.port !== 22 ? `:${h.port}` : ""
+              }`}
+              style={{
+                borderColor: `hsl(${hueOf(h)} 45% 38%)`,
+                color: `hsl(${hueOf(h)} 65% 74%)`,
+              }}
               onClick={() => onConnect(h)}
             >
-              {initialOf(h)}
+              {badgeOf(h)}
             </button>
           ))}
         </div>
@@ -129,8 +153,12 @@ export default function Sidebar({
       <button className="btn btn--primary add-btn" onClick={onAdd}>
         + Host baru
       </button>
-      <button className="import-btn" onClick={onImport}>
-        Impor dari ~/.ssh/config
+      <button
+        className="btn import-btn"
+        title="Membaca berkas ~/.ssh/config di komputer ini, lalu menawarkan host yang tercatat di sana untuk ditambahkan"
+        onClick={onImport}
+      >
+        Impor host dari komputer ini
       </button>
     </aside>
   );

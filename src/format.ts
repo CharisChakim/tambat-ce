@@ -1,5 +1,34 @@
 import type { DiskUsage } from "./types";
 
+/** Batas panjang `akhir` — dibuat pendek supaya awal nama tetap dapat ruang
+ *  di panel sempit. */
+const TAIL_MAX = 8;
+/** Segmen sepanjang ini masih dianggap ekstensi, bukan bagian nama. */
+const EXT_MAX = 4;
+
+/** Pecah nama file jadi [awal, akhir] untuk potong-di-tengah lewat CSS: bagian
+ *  `awal` yang menyusut dan diberi elipsis, `akhir` selalu tampil utuh — jadi
+ *  ekstensi tidak pernah jadi bagian pertama yang hilang.
+ *
+ *  `akhir` diambil dari ekstensi, bukan sejumlah karakter buta, supaya di panel
+ *  sempit tidak memakan ruang yang seharusnya untuk awal nama. Ekstensi ganda
+ *  ikut terbawa selama total masih pendek: "cadangan.sql.gz" → [".sql.gz"].
+ *  Nama pendek tidak dipecah (`akhir` kosong). */
+export function splitName(name: string): [string, string] {
+  const dot = name.lastIndexOf(".");
+  if (dot > 0 && name.length - dot - 1 <= EXT_MAX) {
+    // Ikutkan ekstensi kedua (mis. ".tar" pada ".tar.gz") bila masih muat.
+    const dot2 = name.lastIndexOf(".", dot - 1);
+    const start =
+      dot2 > 0 && dot - dot2 - 1 <= EXT_MAX && name.length - dot2 <= TAIL_MAX ? dot2 : dot;
+    // Hanya pecah kalau masih ada sisa nama yang layak ditampilkan.
+    if (start >= 5) return [name.slice(0, start), name.slice(start)];
+    return [name, ""];
+  }
+  // Tanpa ekstensi: sisakan sedikit ekor agar akhiran (mis. "-final") terbaca.
+  return name.length > 14 ? [name.slice(0, -5), name.slice(-5)] : [name, ""];
+}
+
 export function fmtBytes(n: number): string {
   if (n < 1024) return `${n} B`;
   const units = ["KiB", "MiB", "GiB", "TiB"];

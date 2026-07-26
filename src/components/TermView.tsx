@@ -3,7 +3,6 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { SearchAddon } from "@xterm/addon-search";
 import { WebLinksAddon } from "@xterm/addon-web-links";
-import { WebglAddon } from "@xterm/addon-webgl";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import "@xterm/xterm/css/xterm.css";
 import {
@@ -101,19 +100,6 @@ export default function TermView({ tab, active, onStatus, onCwd, onHostKey }: Pr
       setHits({ index: resultIndex, count: resultCount }),
     );
     term.open(el);
-
-    // Renderer WebGL bikin output deras (cat file besar, htop) tetap mulus.
-    // Kalau GPU/driver menolak atau konteksnya hilang di tengah jalan, addon
-    // dibuang dan xterm otomatis kembali ke renderer DOM — jangan sampai
-    // terminal jadi blank hanya karena akselerasi gagal.
-    try {
-      const webgl = new WebglAddon();
-      webgl.onContextLoss(() => webgl.dispose());
-      term.loadAddon(webgl);
-    } catch {
-      // biarkan pakai renderer DOM
-    }
-
     fit.fit();
     fitRef.current = fit;
     termRef.current = term;

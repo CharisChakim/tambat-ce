@@ -25,6 +25,7 @@ import {
   fmtShort,
   fmtUptime,
   joinPath,
+  splitName,
 } from "../format";
 import type { DirEntry, DirListing, ServerStats, Tab } from "../types";
 import FileAskDialog, { type AskState } from "./FileAskDialog";
@@ -85,16 +86,22 @@ const IconDelete = (
   </svg>
 );
 
+/** Batas lebar panel saat diseret, px. */
+const MIN_W = 240;
+const MAX_W = 720;
+
 interface Props {
   tab: Tab;
   active: boolean;
   /** direktori kerja shell saat ini (dari OSC 7 terminal); panel mengikutinya */
   cwd?: string;
+  width: number;
+  onWidthChange: (w: number) => void;
 }
 
 /** Panel ala MobaXterm: file browser SFTP + statistik server (RAM, disk,
  *  suhu, baterai, ping). Memakai sesi SSH kedua, terpisah dari terminal. */
-export default function FilePanel({ tab, active, cwd }: Props) {
+export default function FilePanel({ tab, active, cwd, width, onWidthChange }: Props) {
   const panelId = `panel-${tab.tabId}-${tab.attempt}`;
   const [listing, setListing] = useState<DirListing | null>(null);
   const [pathInput, setPathInput] = useState("");
@@ -320,15 +327,37 @@ export default function FilePanel({ tab, active, cwd }: Props) {
     navigator.clipboard?.writeText(s).catch(() => {});
   };
 
+  /** Seret tepi kanan panel untuk mengubah lebarnya. */
+  const startResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = width;
+    const onMove = (ev: MouseEvent) =>
+      onWidthChange(Math.min(MAX_W, Math.max(MIN_W, startW + ev.clientX - startX)));
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      document.body.classList.remove("resizing-col");
+    };
+    document.body.classList.add("resizing-col");
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
+  const grip = (
+    <div className="fpanel-grip" title="Tarik untuk mengubah lebar panel" onMouseDown={startResize} />
+  );
+
   if (error && !listing) {
     return (
-      <aside className="fpanel">
+      <aside className="fpanel" style={{ width, minWidth: width }}>
         <div className="fpanel-msg">
           <p className="fpanel-err">{error}</p>
           <button className="btn" onClick={() => setRetry((r) => r + 1)}>
             Coba lagi
           </button>
         </div>
+        {grip}
       </aside>
     );
   }
@@ -340,7 +369,7 @@ export default function FilePanel({ tab, active, cwd }: Props) {
     : null;
 
   return (
-    <aside className="fpanel">
+    <aside className="fpanel" style={{ width, minWidth: width }}>
       <div className="fpanel-nav">
         <button
           className="icon-btn"
@@ -421,7 +450,9 @@ export default function FilePanel({ tab, active, cwd }: Props) {
             <span className="fentry-head-modified">Dimodifikasi</span>
           </div>
         )}
-        {listing?.entries.map((en) => (
+        {listing?.entries.map((en) => {
+          const [nameHead, nameTail] = splitName(en.name);
+          return (
           <div
             key={en.name}
             className={
@@ -444,14 +475,20 @@ export default function FilePanel({ tab, active, cwd }: Props) {
           >
             <span className="fentry-main">
               <FileIcon name={en.name} isDir={en.isDir} />
-              <span className="fentry-name">{en.name}</span>
+              {/* Dua span: yang pertama menyusut + elipsis, yang kedua selalu
+                  utuh — hasilnya nama terpotong di TENGAH, ekstensi tetap terbaca. */}
+              <span className="fentry-name">
+                <span className="fentry-name-head">{nameHead}</span>
+                <span className="fentry-name-tail">{nameTail}</span>
+              </span>
             </span>
             <span className="fentry-size">{en.isDir ? "" : fmtBytes(en.size)}</span>
             <span className="fentry-modified" title={fmtDate(en.modified)}>
               {fmtDateShort(en.modified)}
             </span>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {menu && listing && (
@@ -576,6 +613,7 @@ export default function FilePanel({ tab, active, cwd }: Props) {
           </>
         )}
       </div>
+      {grip}
     </aside>
   );
 }
