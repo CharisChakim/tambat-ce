@@ -106,6 +106,8 @@ export interface Tab {
   /** rahasia (password / passphrase) untuk sesi ini saja, tidak pernah disimpan ke disk */
   secret?: string;
   status: TabStatus;
+  /** kegagalan terakhir karena kredensial ditolak, bukan karena jaringan/server */
+  authFailed?: boolean;
   /** penghitung agar tombol "sambung ulang" me-remount terminal */
   attempt: number;
 }

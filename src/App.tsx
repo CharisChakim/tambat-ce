@@ -31,6 +31,13 @@ import type {
 let tabCounter = 0;
 const newTabId = () => `tab-${++tabCounter}`;
 
+/**
+ * Apakah pesan galat ini berarti kredensialnya yang ditolak/kurang, bukan
+ * jaringan atau server? Dicocokkan dengan pesan yang dibentuk `ssh.rs::auth`
+ * ("Autentikasi ... gagal/ditolak", "... private key ...").
+ */
+const isAuthFailure = (message: string) => /autentikasi|private key/i.test(message);
+
 const STATUS_DOT: Record<TabStatus, string> = {
   connecting: "dot dot--connecting",
   open: "dot dot--open",
@@ -140,21 +147,16 @@ export default function App() {
   };
 
   const onStatus = (tabId: string, status: TabStatus, message?: string) => {
+    const tab = tabs.find((t) => t.tabId === tabId);
+    const authFailed = status === "error" && !!tab && isAuthFailure(message ?? "");
     setTabs((ts) =>
-      ts.map((t) => (t.tabId === tabId ? { ...t, status } : t)),
+      ts.map((t) => (t.tabId === tabId ? { ...t, status, authFailed } : t)),
     );
     // Rahasia tersimpan yang ditolak server = basi (password diganti dsb.):
     // buang dari cache dan keyring agar koneksi berikutnya bertanya ulang.
-    const tab = tabs.find((t) => t.tabId === tabId);
-    if (status === "error" && tab) {
-      const msg = (message ?? "").toLowerCase();
-      if (
-        (tab.host.authType === "password" && msg.includes("password")) ||
-        (tab.host.authType === "key" && msg.includes("key"))
-      ) {
-        secretCache.delete(tab.host.id);
-        secretDelete(tab.host.id).catch(() => {});
-      }
+    if (authFailed && tab) {
+      secretCache.delete(tab.host.id);
+      secretDelete(tab.host.id).catch(() => {});
     }
   };
 
@@ -162,7 +164,9 @@ export default function App() {
   const reconnectTab = (tabId: string) =>
     setTabs((ts) =>
       ts.map((t) =>
-        t.tabId === tabId ? { ...t, status: "connecting", attempt: t.attempt + 1 } : t,
+        t.tabId === tabId
+          ? { ...t, status: "connecting", authFailed: false, attempt: t.attempt + 1 }
+          : t,
       ),
     );
 
@@ -182,7 +186,11 @@ export default function App() {
   const retryTab = (tabId: string) => {
     const tab = tabs.find((t) => t.tabId === tabId);
     if (!tab) return;
-    if (tab.host.authType === "password" || tab.host.authType === "key") {
+    // Hanya bertanya lagi kalau memang kredensialnya yang ditolak. Untuk putus
+    // jaringan atau server yang direstart, rahasia lama masih sah — langsung
+    // coba lagi. Sebelumnya selalu bertanya, dan menutup dialog itu menghapus
+    // rahasia dari cache sehingga sesi berikutnya ikut kehilangan login otomatis.
+    if (tab.authFailed && (tab.host.authType === "password" || tab.host.authType === "key")) {
       // Minta rahasia lagi (mungkin salah ketik / key butuh passphrase)
       closeTab(tabId);
       secretCache.delete(tab.host.id);

@@ -1,7 +1,7 @@
 use crate::hostkeys::{self, HostKeyInfo, Verdict};
 use base64::{engine::general_purpose::STANDARD as B64, Engine as _};
 use serde::{Deserialize, Serialize};
-use ssh2::{PtyModeOpcode, PtyModes, Session};
+use ssh2::{KeyboardInteractivePrompt, Prompt, PtyModeOpcode, PtyModes, Session};
 use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::net::{TcpStream, ToSocketAddrs};
@@ -66,6 +66,20 @@ impl From<&str> for ConnectError {
 /// dan pengguna hanya melihat "Koneksi ditutup" tanpa sebab.
 const KEEPALIVE_S: u32 = 30;
 
+/// Batas waktu menyambung TCP, per alamat hasil resolve. Sengaja pendek: host
+/// yang mati atau porta yang di-drop firewall harus ketahuan cepat, bukan
+/// setelah pengguna menunggu belasan detik di depan layar kosong.
+const TCP_CONNECT_TIMEOUT_S: u64 = 3;
+
+/// Batas waktu handshake SSH. Tanpa ini, porta yang terbuka tapi tidak pernah
+/// mengirim banner SSH (load balancer, honeypot, layanan lain) menggantung
+/// selamanya — `connect_timeout` sudah lewat pada tahap ini.
+const HANDSHAKE_TIMEOUT_MS: u32 = 3_000;
+
+/// Auth diberi jatah lebih longgar daripada handshake: PAM, LDAP, dan modul 2FA
+/// di server memang kadang lambat menjawab, dan itu bukan tanda server mati.
+const AUTH_TIMEOUT_MS: u32 = 30_000;
+
 /// TCP → handshake → verifikasi host key → keepalive → auth.
 ///
 /// Verifikasi host key sengaja berada SEBELUM `auth`: kalau identitas server
@@ -80,6 +94,7 @@ pub(crate) fn open_session(
 
     let mut sess = Session::new().map_err(|e| e.to_string())?;
     sess.set_tcp_stream(tcp);
+    sess.set_timeout(HANDSHAKE_TIMEOUT_MS);
     sess.handshake()
         .map_err(|e| format!("Handshake SSH gagal: {}", e))?;
 
@@ -88,6 +103,7 @@ pub(crate) fn open_session(
         Verdict::Untrusted(info) => return Err(ConnectError::HostKey { info }),
     }
 
+    sess.set_timeout(AUTH_TIMEOUT_MS);
     sess.set_keepalive(true, KEEPALIVE_S);
     auth(&sess, p)?;
     Ok(sess)
@@ -122,7 +138,7 @@ pub(crate) fn connect_tcp(host: &str, port: u16) -> Result<TcpStream, String> {
         .map_err(|e| format!("Alamat tidak valid: {}", e))?;
     let mut last_err = format!("Alamat {} tidak dapat di-resolve", host);
     for addr in addrs {
-        match TcpStream::connect_timeout(&addr, Duration::from_secs(10)) {
+        match TcpStream::connect_timeout(&addr, Duration::from_secs(TCP_CONNECT_TIMEOUT_S)) {
             Ok(tcp) => return Ok(tcp),
             Err(e) => last_err = format!("Gagal terhubung ke {}: {}", addr, e),
         }
@@ -130,12 +146,58 @@ pub(crate) fn connect_tcp(host: &str, port: u16) -> Result<TcpStream, String> {
     Err(last_err)
 }
 
+/// Menjawab tantangan `keyboard-interactive` dengan password yang sudah dimiliki.
+///
+/// Banyak server mematikan `PasswordAuthentication` tapi membiarkan
+/// `KbdInteractiveAuthentication` menyala; di server seperti itu satu-satunya
+/// tantangan yang diajukan adalah "Password:" — sama saja dengan auth password
+/// biasa, hanya dibungkus protokol yang berbeda, jadi tidak perlu bertanya lagi
+/// ke pengguna.
+///
+/// Tantangan yang jawabannya boleh terlihat (`echo == true`, misalnya
+/// "Username:") dijawab kosong: itu bukan password, dan menebaknya justru
+/// mengirimkan password ke tempat yang salah. Server yang meminta kode OTP
+/// karena itu akan gagal — dukungan 2FA butuh dialog yang menampilkan teks
+/// tantangan apa adanya, dan itu belum ada.
+struct PasswordPrompter<'a> {
+    password: &'a str,
+}
+
+impl KeyboardInteractivePrompt for PasswordPrompter<'_> {
+    fn prompt(&mut self, _username: &str, _instructions: &str, prompts: &[Prompt]) -> Vec<String> {
+        prompts
+            .iter()
+            .map(|p| {
+                if p.echo {
+                    String::new()
+                } else {
+                    self.password.to_string()
+                }
+            })
+            .collect()
+    }
+}
+
 pub(crate) fn auth(sess: &Session, p: &ConnectParams) -> Result<(), String> {
     match p.auth_type.as_str() {
         "password" => {
             let pw = p.password.as_deref().unwrap_or("");
-            sess.userauth_password(&p.username, pw)
-                .map_err(|e| format!("Autentikasi password gagal: {}", e))?;
+            // Tanyakan dulu metode apa yang diterima server. Menebak lalu gagal
+            // memakai satu jatah `MaxAuthTries` dan menambah hitungan fail2ban,
+            // sedangkan permintaan daftar ini ("none") tidak dihitung gagal.
+            let methods = sess.auth_methods(&p.username).unwrap_or("").to_string();
+            // Server yang menerima auth "none" sudah lolos di titik ini.
+            if sess.authenticated() {
+                return Ok(());
+            }
+            if !methods.contains("password") && methods.contains("keyboard-interactive") {
+                let mut prompter = PasswordPrompter { password: pw };
+                sess.userauth_keyboard_interactive(&p.username, &mut prompter)
+                    .map_err(|e| format!("Autentikasi password gagal: {}", e))?;
+            } else {
+                sess.userauth_password(&p.username, pw)
+                    .map_err(|e| format!("Autentikasi password gagal: {}", e))?;
+            }
         }
         "key" => {
             let key = expand_tilde(
@@ -334,7 +396,92 @@ pub async fn ssh_connect(
 
 #[cfg(test)]
 mod tests {
-    use super::normalize_host;
+    use super::{connect_tcp, normalize_host, TCP_CONNECT_TIMEOUT_S};
+    use std::time::{Duration, Instant};
+
+    /// Host yang tidak menjawab harus menyerah dalam hitungan detik, bukan
+    /// membuat pengguna menunggu lama di layar "menghubungkan…".
+    /// 192.0.2.1 = TEST-NET-1 (RFC 5737), dijamin tidak dirutekan ke mana pun.
+    #[test]
+    fn host_tak_terjangkau_menyerah_cepat() {
+        let t0 = Instant::now();
+        assert!(connect_tcp("192.0.2.1", 22).is_err());
+        let elapsed = t0.elapsed();
+        assert!(
+            elapsed < Duration::from_secs(TCP_CONNECT_TIMEOUT_S + 2),
+            "menyerah setelah {:?}, batasnya {}s",
+            elapsed,
+            TCP_CONNECT_TIMEOUT_S
+        );
+    }
+
+    /// Server yang mematikan `PasswordAuthentication` tapi menyalakan
+    /// `KbdInteractiveAuthentication` harus tetap bisa dimasuki dengan password
+    /// yang sama, tanpa bertanya apa pun lagi ke pengguna. Sebelum dukungan ini
+    /// ada, server semacam itu tertutup sama sekali.
+    ///
+    /// Menyalakan mock sshd sendiri di porta terpisah (2223) supaya tidak
+    /// bentrok dengan mock mode password di 2222 yang dipakai E2E lain.
+    #[test]
+    #[ignore]
+    fn auth_keyboard_interactive_saat_password_dimatikan() {
+        use super::{auth, ConnectParams};
+        use ssh2::Session;
+        use std::net::TcpStream;
+        use std::process::{Command, Stdio};
+
+        const PORT: u16 = 2223;
+
+        /// Bunuh mock sshd walau assert di bawahnya panik.
+        struct Mock(std::process::Child);
+        impl Drop for Mock {
+            fn drop(&mut self) {
+                let _ = self.0.kill();
+                let _ = self.0.wait();
+            }
+        }
+
+        let _mock = Mock(
+            Command::new("python3")
+                .arg(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/mock_sshd.py"))
+                .env("MOCK_SSHD_PORT", PORT.to_string())
+                .env("MOCK_SSHD_AUTH", "keyboard-interactive")
+                .stdout(Stdio::null())
+                .spawn()
+                .expect("butuh python3 + paramiko"),
+        );
+
+        let tcp = (0..50)
+            .find_map(|_| {
+                std::thread::sleep(Duration::from_millis(100));
+                TcpStream::connect(("127.0.0.1", PORT)).ok()
+            })
+            .expect("mock sshd tidak pernah siap");
+
+        let mut sess = Session::new().unwrap();
+        sess.set_tcp_stream(tcp);
+        sess.set_timeout(10_000);
+        sess.handshake().unwrap();
+
+        let p = ConnectParams {
+            host: "127.0.0.1".into(),
+            port: PORT,
+            username: "demo".into(),
+            auth_type: "password".into(),
+            password: Some("demo".into()),
+            key_path: None,
+            key_passphrase: None,
+            cols: 80,
+            rows: 24,
+        };
+
+        assert!(
+            !sess.auth_methods("demo").unwrap().contains("password"),
+            "prasyarat: mock harus menolak auth password polos"
+        );
+        auth(&sess, &p).expect("keyboard-interactive harus dijawab dengan password");
+        assert!(sess.authenticated());
+    }
 
     #[test]
     fn normalisasi_host() {

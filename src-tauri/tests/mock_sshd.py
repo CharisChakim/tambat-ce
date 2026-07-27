@@ -10,6 +10,14 @@ Melayani:
 
 Jalankan: python3 mock_sshd.py   (mendengarkan di 127.0.0.1:2222)
 Butuh: pip install paramiko
+
+Env opsional:
+  MOCK_SSHD_PORT=2223               porta lain (default 2222)
+  MOCK_SSHD_AUTH=keyboard-interactive
+      Tiru server yang mematikan `PasswordAuthentication` tapi menyalakan
+      `KbdInteractiveAuthentication` — hanya menerima keyboard-interactive,
+      dengan satu tantangan "Password: ". Dipakai test E2E
+      `ssh::tests::auth_keyboard_interactive_saat_password_dimatikan`.
 """
 import os
 import socket
@@ -25,7 +33,9 @@ from paramiko import (
     SFTPServerInterface,
 )
 
-HOST, PORT = "127.0.0.1", 2222
+HOST = "127.0.0.1"
+PORT = int(os.environ.get("MOCK_SSHD_PORT", "2222"))
+AUTH = os.environ.get("MOCK_SSHD_AUTH", "password")
 USER, PASSWORD = "demo", "demo"
 
 
@@ -156,10 +166,25 @@ def run_exec(channel, command):
 
 class Server(paramiko.ServerInterface):
     def get_allowed_auths(self, username):
-        return "password"
+        return AUTH
 
     def check_auth_password(self, username, password):
+        # Dengan MOCK_SSHD_AUTH=keyboard-interactive, tolak apa pun lewat jalur
+        # ini — persis seperti server ber-`PasswordAuthentication no`.
+        if AUTH != "password":
+            return paramiko.AUTH_FAILED
         if (username, password) == (USER, PASSWORD):
+            return paramiko.AUTH_SUCCESSFUL
+        return paramiko.AUTH_FAILED
+
+    def check_auth_interactive(self, username, submethods):
+        if AUTH != "keyboard-interactive":
+            return paramiko.AUTH_FAILED
+        # (prompt, echo) — echo False = jawabannya rahasia, seperti password.
+        return paramiko.InteractiveQuery("", "", ("Password: ", False))
+
+    def check_auth_interactive_response(self, responses):
+        if list(responses) == [PASSWORD]:
             return paramiko.AUTH_SUCCESSFUL
         return paramiko.AUTH_FAILED
 

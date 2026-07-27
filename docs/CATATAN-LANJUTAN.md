@@ -2,8 +2,8 @@
 
 Ringkasan keadaan proyek untuk melanjutkan pekerjaan di sesi berikutnya.
 
-**Terakhir diperbarui:** 2026-07-26
-**Commit terakhir:** `9a024c2`
+**Terakhir diperbarui:** 2026-07-27
+**Commit terakhir:** `cc06471`
 
 ---
 
@@ -34,12 +34,18 @@ di situ.
 npx tsc --noEmit                     # frontend
 cd src-tauri && cargo test           # 17 unit test
 python3 src-tauri/tests/mock_sshd.py &   # paramiko, port 2222, user demo/demo
-cd src-tauri && cargo test -- --ignored --test-threads=1   # 3 E2E
+cd src-tauri && cargo test -- --ignored --test-threads=1   # 4 E2E
 ```
 
 Test keyring butuh sesi desktop dengan Secret Service aktif. Mock sshd
 menghasilkan host key baru setiap kali dijalankan, jadi Tambat akan menampilkan
 dialog "host key BERUBAH" setelah mock direstart — itu perilaku yang benar.
+
+Mock sshd menerima dua env opsional: `MOCK_SSHD_PORT` dan `MOCK_SSHD_AUTH`
+(`password` atau `keyboard-interactive`). Test
+`ssh::tests::auth_keyboard_interactive_saat_password_dimatikan` memakai keduanya
+untuk menyalakan mock-nya sendiri di porta 2223, jadi test itu satu-satunya E2E
+yang tidak perlu mock dinyalakan manual lebih dulu.
 
 ### Menguji UI tanpa menyentuh data asli
 
@@ -52,6 +58,68 @@ PROF=/tmp/tambat-uji
 mkdir -p "$PROF/app.tambat.desktop" "$PROF/.ssh"
 HOME="$PROF" USER=namauser XDG_DATA_HOME="$PROF" ./src-tauri/target/release/tambat
 ```
+
+---
+
+## Yang dikerjakan pada sesi 2026-07-27
+
+### "Sambung ulang" tidak lagi meminta password tanpa perlu
+
+`retryTab` di `src/App.tsx` dulu selalu menghapus rahasia dari cache lalu
+menampilkan dialog password, apa pun penyebab tab terputus. Untuk putus jaringan
+atau server yang direstart itu salah dua kali: pengguna harus mengetik ulang
+password yang sebenarnya masih sah, dan kalau dialognya ditutup tanpa diisi,
+rahasianya sudah terlanjur hilang dari cache sehingga sesi berikutnya ikut
+kehilangan login otomatis.
+
+Sekarang `Tab` punya `authFailed`, diisi `onStatus` hanya kalau pesan galatnya
+memang soal kredensial (helper `isAuthFailure`, dicocokkan dengan pesan yang
+dibentuk `ssh.rs::auth`). "Sambung ulang" bertanya hanya kalau `authFailed`;
+selain itu langsung mencoba lagi dengan rahasia yang sudah ada. Pembuangan
+rahasia basi dari cache dan keyring juga ikut bersyarat `authFailed`, dulu
+dicocokkan longgar dengan `msg.includes("password")` / `includes("key")`.
+
+### Koneksi ke host mati menyerah dalam hitungan detik
+
+`src-tauri/src/ssh.rs`, tiga konstanta baru:
+
+- `TCP_CONNECT_TIMEOUT_S = 3` — dulu 10 detik per alamat. Perlu diingat batas ini
+  berlaku **per alamat hasil resolve**, jadi nama host yang punya A dan AAAA
+  sekaligus bisa memakan 6 detik sebelum menyerah.
+- `HANDSHAKE_TIMEOUT_MS = 3_000` — dulu tidak ada timeout sama sekali. Porta yang
+  terbuka tapi tidak pernah mengirim banner SSH menggantung selamanya, dan
+  `connect_timeout` sudah lewat pada tahap itu.
+- `AUTH_TIMEOUT_MS = 30_000` — sengaja jauh lebih longgar daripada handshake:
+  PAM, LDAP, dan modul 2FA di server memang kadang lambat, dan itu bukan tanda
+  server mati.
+
+Diuji `ssh::tests::host_tak_terjangkau_menyerah_cepat` memakai 192.0.2.1
+(TEST-NET-1, RFC 5737 — dijamin tidak dirutekan).
+
+### Auth keyboard-interactive
+
+Temuan audit nomor 1 selesai. `auth()` sekarang menanyakan `auth_methods()` lebih
+dulu; kalau server tidak mengiklankan `password` tapi mengiklankan
+`keyboard-interactive`, tantangannya dijawab `PasswordPrompter` dengan password
+yang sudah dimiliki. Server yang mematikan `PasswordAuthentication` tapi
+menyalakan `KbdInteractiveAuthentication` — kombinasi umum di VPS — sebelumnya
+tertutup sama sekali.
+
+`auth_methods()` dipanggil lebih dulu dan bukan sekadar "coba password, kalau
+gagal coba yang lain" karena percobaan yang gagal memakai satu jatah
+`MaxAuthTries` dan menambah hitungan fail2ban. Permintaan daftar metode
+(auth "none") tidak dihitung gagal. Sekalian ditangani: server yang menerima
+auth "none" langsung dianggap lolos.
+
+**Batasnya:** tantangan yang jawabannya boleh terlihat (`echo == true`) dijawab
+string kosong, dan tidak ada dialog yang menampilkan teks tantangan dari server.
+Artinya **2FA/OTP tetap tidak didukung** — pemilik proyek mengonfirmasi tidak ada
+server 2FA yang perlu dilayani. Kalau nanti dibutuhkan, lihat catatan ruang
+lingkupnya di bagian "Fitur ala Termius" di bawah.
+
+Diuji `ssh::tests::auth_keyboard_interactive_saat_password_dimatikan`. Test itu
+sudah diperiksa benar-benar gagal kalau cabang keyboard-interactive dimatikan,
+bukan lolos karena kebetulan.
 
 ---
 
@@ -180,21 +248,29 @@ mematikannya.
 
 Urut dari yang paling berdampak:
 
-1. **Auth `keyboard-interactive` tidak didukung** (`src-tauri/src/ssh.rs`) —
-   hanya `password`/`pubkey`/`agent`. Server yang mematikan
-   `PasswordAuthentication` tapi menyalakan `KbdInteractiveAuthentication`
-   (umum di VPS, dan wajib untuk 2FA) **tidak bisa dimasuki sama sekali**.
-2. **Panel bergantung pada shell remote** — `cp`/`mv`/`rm` dan statistik
+1. **Panel bergantung pada shell remote** — `cp`/`mv`/`rm` dan statistik
    dijalankan lewat `run_sh` + `exec "sh"`. Server SFTP-only
    (`ForceCommand internal-sftp`) membuat semua operasi itu gagal. SFTP punya
    primitif untuk rename/remove yang belum dipakai.
-3. **Renderer terminal** masih DOM sepenuhnya (lihat keputusan WebGL di atas).
+2. **Renderer terminal** masih DOM sepenuhnya (lihat keputusan WebGL di atas).
 
 ### Fitur ala Termius yang belum ada
 
 Port forwarding (local/remote/dynamic) · jump host / ProxyJump · grup atau tag
 host · split pane · snippet perintah · halaman setelan (font, tema, scrollback) ·
 reconnect otomatis · indikator progres transfer file.
+
+**2FA/OTP** juga belum ada, dan ruang lingkupnya lebih besar daripada kelihatan.
+Butuh round-trip backend↔UI: `KeyboardInteractivePrompt::prompt` berjalan di
+thread blocking, jadi ia harus mengirim daftar tantangan ke frontend lewat event
+lalu memblokir menunggu balasan dari sebuah command baru — tambah state channel
+di backend dan satu komponen dialog yang merender teks tantangan apa adanya
+(teksnya ditentukan server saat runtime, tidak bisa dihardcode).
+
+Konsekuensi yang tidak bisa dihindari: satu tab membuka **dua** koneksi SSH
+(lihat keputusan di atas), dan kode OTP sekali pakai tidak bisa didaur ulang
+untuk koneksi kedua seperti halnya password. Jadi dengan 2FA, tiap tab akan
+meminta kode dua kali. Menghilangkan itu berarti pindah ke `russh`.
 
 ---
 
