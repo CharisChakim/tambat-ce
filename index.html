@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#091319" />
+    <meta
+      name="description"
+      content="Kelompokkan server, kelola file, dan bekerja dari satu workspace. Tambat Pro menyinkronkan daftar server dan grup antarperangkat." data-en-content="Group your servers, manage files, and work from one workspace. Tambat Pro syncs your server list and groups across devices." data-es-content="Agrupa tus servidores, gestiona archivos y trabaja desde un solo espacio. Tambat Pro sincroniza tus servidores y grupos entre dispositivos." data-fr-content="Regroupez vos serveurs, gérez vos fichiers et travaillez dans un seul espace. Tambat Pro synchronise vos serveurs et groupes entre appareils." data-de-content="Gruppiere deine Server, verwalte Dateien und arbeite in einem Arbeitsbereich. Tambat Pro synchronisiert deine Serverliste und Gruppen zwischen Geräten."
+    />
+    <meta property="og:title" content="Tambat — SSH client desktop" data-en-content="Tambat — Desktop SSH client" data-es-content="Tambat — Cliente SSH de escritorio" data-fr-content="Tambat — Client SSH de bureau" data-de-content="Tambat — SSH-Client für den Desktop" />
+    <meta
+      property="og:description"
+      content="Semua server tertata dalam satu workspace. Kelompokkan sesuai proyek dan sinkronkan antarperangkat dengan Tambat Pro." data-en-content="All your servers, organized in one workspace. Group them by project and sync across devices with Tambat Pro." data-es-content="Todos tus servidores organizados en un solo espacio. Agrúpalos por proyecto y sincronízalos entre dispositivos con Tambat Pro." data-fr-content="Tous vos serveurs organisés dans un seul espace. Regroupez-les par projet et synchronisez-les entre appareils avec Tambat Pro." data-de-content="Alle Server in einem Arbeitsbereich organisiert. Gruppiere sie nach Projekt und synchronisiere sie mit Tambat Pro zwischen Geräten."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://charischakim.github.io/tambat-ce/assets/workspace-home.png" />
+    <meta property="og:url" content="https://charischakim.github.io/tambat-ce/" />
+    <link rel="icon" href="./assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title data-en="Tambat — Desktop SSH client" data-es="Tambat — Cliente SSH de escritorio" data-fr="Tambat — Client SSH de bureau" data-de="Tambat — SSH-Client für den Desktop">Tambat — SSH client desktop</title>
+    <script src="./language.js" defer></script>
+    <script src="./carousel.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main"><span data-en="Skip to content" data-es="Saltar al contenido" data-fr="Aller au contenu" data-de="Zum Inhalt springen">Lewati ke konten</span></a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Tambat, kembali ke atas" data-en-aria-label="Tambat, back to top" data-es-aria-label="Tambat, volver arriba" data-fr-aria-label="Tambat, retour en haut" data-de-aria-label="Tambat, zurück nach oben">
+        <img src="./assets/logo.svg" alt="" width="55" height="36" />
+        <span>tambat</span>
+      </a>
+      <nav aria-label="Navigasi utama" data-en-aria-label="Main navigation" data-es-aria-label="Navegación principal" data-fr-aria-label="Navigation principale" data-de-aria-label="Hauptnavigation">
+        <a href="#fitur"><span data-en="Features" data-es="Funciones" data-fr="Fonctionnalités" data-de="Funktionen">Fitur</span></a>
+        <a href="#paket">Free &amp; Pro</a>
+        <a href="#tampilan"><span data-en="Preview" data-es="Vista previa" data-fr="Aperçu" data-de="Vorschau">Tampilan</span></a>
+        <a href="#unduh"><span data-en="Get Tambat" data-es="Consigue Tambat" data-fr="Obtenir Tambat" data-de="Tambat holen">Dapatkan Tambat</span></a>
+        <details class="language-switcher" hidden>
+          <summary aria-label="Pilih bahasa" data-en-aria-label="Choose language" data-es-aria-label="Elegir idioma" data-fr-aria-label="Choisir la langue" data-de-aria-label="Sprache wählen">
+            <span class="language-current-flag" aria-hidden="true"></span>
+            <span class="language-current-name">Indonesia</span>
+          </summary>
+          <div class="language-options">
+          <button type="button" data-language="id" lang="id" aria-pressed="true">
+            <svg class="language-flag" viewBox="0 0 60 40" aria-hidden="true" focusable="false">
+              <path fill="#fff" d="M0 0h60v40H0z" />
+              <path fill="#e63946" d="M0 0h60v20H0z" />
+            </svg>
+            <span>Indonesia</span>
+          </button>
+          <button type="button" data-language="en" lang="en" aria-pressed="false">
+            <svg class="language-flag" viewBox="0 0 60 40" aria-hidden="true" focusable="false">
+              <path fill="#21468b" d="M0 0h60v40H0z" />
+              <path stroke="#fff" stroke-width="8" d="m0 0 60 40m0-40L0 40" />
+              <path stroke="#cf142b" stroke-width="3" d="m0 0 60 40m0-40L0 40" />
+              <path stroke="#fff" stroke-width="13" d="M30 0v40M0 20h60" />
+              <path stroke="#cf142b" stroke-width="7" d="M30 0v40M0 20h60" />
+            </svg>
+            <span>English</span>
+          </button>
+          <button type="button" data-language="es" lang="es" aria-pressed="false">
+            <svg class="language-flag" viewBox="0 0 60 40" aria-hidden="true" focusable="false">
+              <path fill="#aa151b" d="M0 0h60v40H0z" />
+              <path fill="#f1bf00" d="M0 10h60v20H0z" />
+            </svg>
+            <span>Español</span>
+          </button>
+          <button type="button" data-language="fr" lang="fr" aria-pressed="false">
+            <svg class="language-flag" viewBox="0 0 60 40" aria-hidden="true" focusable="false">
+              <path fill="#fff" d="M0 0h60v40H0z" />
+              <path fill="#002654" d="M0 0h20v40H0z" />
+              <path fill="#ed2939" d="M40 0h20v40H40z" />
+            </svg>
+            <span>Français</span>
+          </button>
+          <button type="button" data-language="de" lang="de" aria-pressed="false">
+            <svg class="language-flag" viewBox="0 0 60 40" aria-hidden="true" focusable="false">
+              <path fill="#ffce00" d="M0 0h60v40H0z" />
+              <path fill="#d00" d="M0 0h60v27H0z" />
+              <path fill="#000" d="M0 0h60v13H0z" />
+            </svg>
+            <span>Deutsch</span>
+          </button>
+          </div>
+        </details>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> <span data-en="Desktop SSH client" data-es="Cliente SSH de escritorio" data-fr="Client SSH de bureau" data-de="SSH-Client für den Desktop">SSH client desktop</span></p>
+          <h1><span data-en="Remote servers," data-es="Servidores remotos," data-fr="Serveurs distants," data-de="Entfernte Server,">Server jauh,</span><br /><em><span data-en="close at hand." data-es="siempre a mano." data-fr="à portée de main." data-de="zum Greifen nah.">terasa dekat.</span></em></h1>
+          <p class="hero-lead" data-en="Organize servers by project, open a session, and manage files in one workspace. Switch devices? Bring your server list and groups with you through Tambat Pro sync." data-es="Organiza servidores por proyecto, abre una sesión y gestiona archivos en un solo espacio. ¿Cambias de dispositivo? Lleva contigo tu lista de servidores y grupos con la sincronización de Tambat Pro." data-fr="Organisez vos serveurs par projet, ouvrez une session et gérez vos fichiers dans un seul espace. Vous changez d’appareil ? Retrouvez vos serveurs et groupes grâce à la synchronisation Tambat Pro." data-de="Organisiere Server nach Projekt, öffne eine Sitzung und verwalte Dateien in einem Arbeitsbereich. Wechselst du das Gerät? Mit Tambat Pro nimmst du deine Serverliste und Gruppen mit.">
+            Tata server sesuai proyek, buka sesi, dan kelola file dari satu workspace.
+            Pindah perangkat? Daftar server dan grup ikut tersinkron dengan Tambat Pro.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#unduh">
+              <span data-en="Get Tambat" data-es="Consigue Tambat" data-fr="Obtenir Tambat" data-de="Tambat holen">Dapatkan Tambat</span>
+            </a>
+            <a class="button button-secondary" href="#tampilan">
+              <span data-en="Explore the workspace" data-es="Explora el espacio de trabajo" data-fr="Explorer l’espace de travail" data-de="Arbeitsbereich entdecken">Lihat tampilannya</span>
+            </a>
+          </div>
+          <ul class="platforms" aria-label="Platform yang didukung" data-en-aria-label="Supported platforms" data-es-aria-label="Plataformas compatibles" data-fr-aria-label="Plateformes prises en charge" data-de-aria-label="Unterstützte Plattformen">
+            <li>Windows</li>
+            <li>macOS</li>
+            <li>Linux</li>
+          </ul>
+        </div>
+
+        <div class="hero-window" aria-label="Halaman utama Tambat terbaru" data-en-aria-label="Updated Tambat home screen" data-es-aria-label="Inicio actualizado de Tambat" data-fr-aria-label="Accueil Tambat actualisé" data-de-aria-label="Aktuelle Tambat-Startseite">
+          <div class="window-bar" aria-hidden="true">
+            <span></span><span></span><span></span>
+            <p>tambat · workspace</p>
+          </div>
+          <img src="./assets/workspace-home.png" alt="Halaman utama Tambat terbaru dengan logo asli, grup server, dan pencarian" data-en-alt="Updated Tambat home screen with the original logo, server groups, and search" data-es-alt="Inicio actualizado de Tambat con el logotipo original, grupos y búsqueda" data-fr-alt="Accueil Tambat actualisé avec le logo original, les groupes et la recherche" data-de-alt="Aktuelle Tambat-Startseite mit Originallogo, Servergruppen und Suche" width="1200" height="800" />
+        </div>
+      </section>
+
+      <section class="proof" aria-label="Manfaat Tambat" data-en-aria-label="Why Tambat" data-es-aria-label="Por qué Tambat" data-fr-aria-label="Pourquoi Tambat" data-de-aria-label="Warum Tambat">
+        <p><span data-en="Stay in control" data-es="Mantén el control" data-fr="Gardez le contrôle" data-de="Behalte die Kontrolle">Tetap dalam kendali</span></p>
+        <strong data-en="Organized server groups" data-es="Grupos de servidores organizados" data-fr="Des groupes de serveurs organisés" data-de="Übersichtliche Servergruppen">Grup server yang rapi</strong>
+        <span></span>
+        <strong data-en="One workspace" data-es="Un solo espacio de trabajo" data-fr="Un seul espace de travail" data-de="Ein Arbeitsbereich">Satu ruang kerja</strong>
+        <span></span>
+        <strong data-en="Sync across devices · Pro" data-es="Sincronización entre dispositivos · Pro" data-fr="Synchronisation entre appareils · Pro" data-de="Geräteübergreifende Synchronisierung · Pro">Sinkron antarperangkat · Pro</strong>
+      </section>
+
+
+      <section class="section sync-showcase" id="sinkronisasi">
+        <div class="sync-copy">
+          <p class="eyebrow"><span></span> <span data-en="Sync across devices · Pro" data-es="Sincronización entre dispositivos · Pro" data-fr="Synchronisation entre appareils · Pro" data-de="Geräteübergreifende Synchronisierung · Pro">Sinkron antarperangkat · Pro</span></p>
+          <h2><span data-en="Different device. Same workspace." data-es="Otro dispositivo. Tu mismo espacio." data-fr="Un autre appareil. Le même espace." data-de="Anderes Gerät. Gleicher Arbeitsbereich.">Beda perangkat. Workspace yang sama.</span></h2>
+          <p><span data-en="Sign in to the same Tambat Pro account on another laptop or desktop. Your server list and groups sync across devices, without setting everything up again." data-es="Inicia sesión con la misma cuenta Tambat Pro en otro portátil o equipo de escritorio. Tu lista de servidores y grupos se sincroniza sin tener que configurarlo todo de nuevo." data-fr="Connectez-vous au même compte Tambat Pro sur un autre ordinateur. Vos serveurs et groupes se synchronisent sans avoir à tout reconfigurer." data-de="Melde dich auf einem anderen Laptop oder Desktop mit demselben Tambat-Pro-Konto an. Deine Serverliste und Gruppen werden synchronisiert, ohne alles neu einzurichten.">Masuk dengan akun Tambat Pro yang sama di laptop atau desktop lain. Daftar server dan grup Anda ikut tersinkron, tanpa menyusun semuanya dari awal.</span></p>
+          <ul class="sync-benefits">
+            <li><span data-en="Sign in with the same account" data-es="Inicia sesión con la misma cuenta" data-fr="Connectez-vous au même compte" data-de="Mit demselben Konto anmelden">Login dengan akun yang sama</span></li>
+            <li><span data-en="Find the servers and groups you already organized" data-es="Encuentra los servidores y grupos que ya organizaste" data-fr="Retrouvez vos serveurs et groupes déjà organisés" data-de="Vertraute Server und Gruppen wiederfinden">Temukan server dan grup yang sudah Anda tata</span></li>
+            <li><span data-en="Check sync status right in your account panel" data-es="Consulta el estado de sincronización en tu cuenta" data-fr="Consultez l’état de synchronisation dans votre compte" data-de="Synchronisierungsstatus direkt im Kontobereich prüfen">Cek status sync langsung dari panel akun</span></li>
+          </ul>
+          <p class="sync-note"><span data-en="Available on Windows, macOS, and Linux with Tambat Pro. Passwords and private keys stay on each device." data-es="Disponible en Windows, macOS y Linux con Tambat Pro. Las contraseñas y claves privadas permanecen en cada dispositivo." data-fr="Disponible sur Windows, macOS et Linux avec Tambat Pro. Les mots de passe et clés privées restent sur chaque appareil." data-de="Mit Tambat Pro auf Windows, macOS und Linux verfügbar. Passwörter und private Schlüssel bleiben auf dem jeweiligen Gerät.">Tersedia di Windows, macOS, dan Linux dengan Tambat Pro. Password dan private key tetap tersimpan di perangkat masing-masing.</span></p>
+        </div>
+        <figure class="sync-preview showcase-frame">
+          <figcaption class="showcase-caption"><span data-en="After sign-in · Pro account" data-es="Tras iniciar sesión · Cuenta Pro" data-fr="Après connexion · Compte Pro" data-de="Nach der Anmeldung · Pro-Konto">Setelah login · Akun Pro</span></figcaption>
+          <img src="./assets/workspace-sync.png" alt="Panel akun Tambat Pro setelah login dengan status data tersinkron" data-en-alt="Tambat Pro account after sign-in with synced data status" data-es-alt="Cuenta Tambat Pro tras iniciar sesión con los datos sincronizados" data-fr-alt="Compte Tambat Pro après connexion avec les données synchronisées" data-de-alt="Tambat-Pro-Konto nach der Anmeldung mit synchronisierten Daten" width="1200" height="800" loading="lazy" />
+        </figure>
+      </section>
+
+      <section class="section" id="fitur">
+        <div class="section-heading">
+          <p class="eyebrow"><span></span> <span data-en="One workspace" data-es="Un solo espacio de trabajo" data-fr="Un seul espace de travail" data-de="Ein Arbeitsbereich">Satu ruang kerja</span></p>
+          <h2><span data-en="More servers. Just as organized." data-es="Más servidores. El mismo orden." data-fr="Plus de serveurs. Toujours aussi organisés." data-de="Mehr Server. Genauso übersichtlich.">Server bertambah. Tetap tertata.</span></h2>
+          <p><span data-en="Start with an organized home screen. Group servers by project, find the one you need, and get straight to work." data-es="Empieza con una pantalla de inicio organizada. Agrupa servidores por proyecto, encuentra el que necesitas y ponte a trabajar." data-fr="Commencez avec un accueil bien organisé. Regroupez les serveurs par projet, trouvez celui qu’il vous faut et mettez-vous au travail." data-de="Starte mit einer übersichtlichen Startseite. Gruppiere Server nach Projekt, finde den passenden und lege direkt los.">Mulai dari halaman utama yang rapi. Kelompokkan server sesuai proyek, temukan yang dibutuhkan, lalu langsung bekerja.</span></p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">▦</div>
+            <h3><span data-en="A home for every project" data-es="Un lugar para cada proyecto" data-fr="Une place pour chaque projet" data-de="Ein Platz für jedes Projekt">Setiap proyek punya tempat</span></h3>
+            <p><span data-en="Group servers by work or project right on your home screen. Drag a server into another group, or search to find it instantly." data-es="Agrupa servidores por trabajo o proyecto en la pantalla de inicio. Arrastra un servidor a otro grupo o encuéntralo al instante con la búsqueda." data-fr="Regroupez vos serveurs par activité ou projet sur l’accueil. Glissez un serveur dans un autre groupe ou trouvez-le instantanément avec la recherche." data-de="Gruppiere Server nach Arbeit oder Projekt direkt auf der Startseite. Ziehe einen Server in eine andere Gruppe oder finde ihn sofort über die Suche.">Kelompokkan server berdasarkan pekerjaan atau proyek langsung di halaman utama. Seret server ke grup lain, atau gunakan pencarian untuk menemukannya dengan cepat.</span></p>
+            <div class="group-preview" role="img" aria-label="Contoh grup Work dan Project dengan server work-api, work-db, dan project-dev" data-en-aria-label="Example Work and Project groups with work-api, work-db, and project-dev servers" data-es-aria-label="Ejemplo de grupos Work y Project con servidores work-api, work-db y project-dev" data-fr-aria-label="Exemple des groupes Work et Project avec les serveurs work-api, work-db et project-dev" data-de-aria-label="Beispielgruppen Work und Project mit den Servern work-api, work-db und project-dev">
+              <div>
+                <strong>Work <span>2</span></strong>
+                <span class="preview-host">work-api</span>
+                <span class="preview-host">work-db</span>
+              </div>
+              <div>
+                <strong>Project <span>1</span></strong>
+                <span class="preview-host">project-dev</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">⇄</div>
+            <h3><span data-en="Switch devices, keep your workspace" data-es="Cambia de dispositivo, conserva tu espacio" data-fr="Changez d’appareil, gardez vos repères" data-de="Neues Gerät, vertrauter Arbeitsbereich">Pindah perangkat, tetap familiar</span> <span class="feature-pro">PRO</span></h3>
+            <p><span data-en="Your saved server list and groups sync across devices. Sign in to the same account without rebuilding your setup from scratch." data-es="Tu lista de servidores y grupos guardados se sincroniza entre dispositivos. Inicia sesión con la misma cuenta sin tener que configurarlo todo de nuevo." data-fr="Vos serveurs et groupes enregistrés se synchronisent entre appareils. Connectez-vous au même compte sans tout reconfigurer." data-de="Deine gespeicherte Serverliste und Gruppen werden zwischen Geräten synchronisiert. Melde dich mit demselben Konto an, ohne alles neu einzurichten.">Daftar server tersimpan dan grup Anda tersinkron antarperangkat. Masuk dengan akun yang sama tanpa menyusun ulang semuanya dari awal.</span></p>
+            <p class="sync-note"><span data-en="Sync for your server list and groups. Passwords and private keys stay on your device." data-es="Sincronización de tu lista de servidores y grupos. Las contraseñas y claves privadas permanecen en tu dispositivo." data-fr="Synchronisation de vos serveurs et groupes. Les mots de passe et clés privées restent sur votre appareil." data-de="Synchronisierung für deine Serverliste und Gruppen. Passwörter und private Schlüssel bleiben auf deinem Gerät.">Sinkronisasi untuk daftar server dan grup. Password dan private key tetap di perangkat Anda.</span></p>
+          </article>
+
+          <article class="feature-card feature-card-wide">
+            <div class="feature-icon" aria-hidden="true">&gt;_</div>
+            <h3><span data-en="Move between servers with ease" data-es="Cambia de servidor fácilmente" data-fr="Passez facilement d’un serveur à l’autre" data-de="Einfach zwischen Servern wechseln">Pindah server, tetap fokus</span></h3>
+            <p><span data-en="Keep multiple sessions open, find the output you need, and pick up where you left off without reconnecting." data-es="Mantén varias sesiones abiertas, encuentra la salida que necesitas y retoma tu trabajo sin volver a conectarte." data-fr="Gardez plusieurs sessions ouvertes, retrouvez les résultats recherchés et reprenez votre travail sans vous reconnecter." data-de="Halte mehrere Sitzungen offen, finde die benötigte Ausgabe und arbeite ohne erneute Verbindung weiter.">Buka beberapa sesi sekaligus, temukan output yang dicari, dan lanjutkan pekerjaan tanpa menyambung ulang.</span></p>
+            <div class="terminal-snippet" aria-hidden="true">
+              <p><span>dev@project</span>:~$ uptime</p>
+              <p>up 24 days, load average: 0.08</p>
+              <p><span>dev@project</span>:~$ <b></b></p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">↕</div>
+            <h3><span data-en="Server files beside your terminal" data-es="Archivos del servidor junto al terminal" data-fr="Vos fichiers à côté du terminal" data-de="Serverdateien neben dem Terminal">File server di sisi terminal</span></h3>
+            <p><span data-en="Browse, upload, download, move, and rename files over SFTP without leaving your session." data-es="Explora, sube, descarga, mueve y renombra archivos por SFTP sin salir de tu sesión." data-fr="Parcourez, envoyez, téléchargez, déplacez et renommez des fichiers via SFTP sans quitter votre session." data-de="Durchsuche, übertrage, verschiebe und benenne Dateien über SFTP um, ohne deine Sitzung zu verlassen.">Jelajah, unggah, unduh, pindah, dan ubah nama file melalui SFTP tanpa meninggalkan sesi.</span></p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">⌁</div>
+            <h3><span data-en="Server health at a glance" data-es="El estado del servidor de un vistazo" data-fr="L’état du serveur en un coup d’œil" data-de="Serverstatus auf einen Blick">Kondisi server sekilas</span></h3>
+            <p><span data-en="Monitor memory, disk, temperature, battery, and latency right from your active session." data-es="Supervisa memoria, disco, temperatura, batería y latencia desde tu sesión activa." data-fr="Surveillez mémoire, disque, température, batterie et latence depuis votre session active." data-de="Überwache Arbeitsspeicher, Festplatte, Temperatur, Akku und Latenz direkt in deiner aktiven Sitzung.">Pantau memori, disk, suhu, baterai, dan latensi langsung dari panel sesi aktif.</span></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="paket">
+        <div class="section-heading compact">
+          <p class="eyebrow"><span></span> FREE &amp; PRO</p>
+          <h2><span data-en="Start with the essentials. Make it yours with Pro." data-es="Empieza con lo esencial. Personaliza con Pro." data-fr="Commencez avec l’essentiel. Personnalisez avec Pro." data-de="Starte mit dem Wesentlichen. Gestalte mehr mit Pro.">Mulai dari kebutuhan utama. Sesuaikan dengan Pro.</span></h2>
+        </div>
+        <div class="plan-grid">
+          <article class="plan-card">
+            <h3>Tambat Free</h3>
+            <p data-en="Your daily SSH workspace, on this device." data-es="Tu espacio SSH diario, en este dispositivo." data-fr="Votre espace SSH quotidien, sur cet appareil." data-de="Dein SSH-Arbeitsbereich für jeden Tag, auf diesem Gerät.">Workspace SSH sehari-hari, di perangkat ini.</p>
+            <ul>
+              <li data-en="SSH terminal, multiple sessions, and SFTP" data-es="Terminal SSH, varias sesiones y SFTP" data-fr="Terminal SSH, sessions multiples et SFTP" data-de="SSH-Terminal, mehrere Sitzungen und SFTP">Terminal SSH, beberapa sesi, dan SFTP</li>
+              <li data-en="Server groups, drag and drop, and search" data-es="Grupos de servidores, arrastrar y soltar y búsqueda" data-fr="Groupes de serveurs, glisser-déposer et recherche" data-de="Servergruppen, Drag-and-drop und Suche">Grup server, drag and drop, dan pencarian</li>
+              <li data-en="Default dark theme and Dermaga terminal colors" data-es="Tema oscuro predeterminado y colores Dermaga" data-fr="Thème sombre par défaut et couleurs de terminal Dermaga" data-de="Standard-Dunkeldesign und Dermaga-Terminalfarben">Tema gelap default dan warna terminal Dermaga</li>
+              <li data-en="Local MCP integration for allowed host metadata" data-es="Integración MCP local para los metadatos de hosts permitidos" data-fr="Intégration MCP locale pour les métadonnées des hôtes autorisés" data-de="Lokale MCP-Integration für Metadaten freigegebener Hosts">Integrasi MCP lokal untuk metadata host yang diizinkan</li>
+            </ul>
+          </article>
+          <article class="plan-card plan-card-pro">
+            <h3>Tambat Pro <span class="feature-pro">PRO</span></h3>
+            <p data-en="Everything in Free, plus sync and personalization." data-es="Todo lo de Free, más sincronización y personalización." data-fr="Tout Free, avec synchronisation et personnalisation." data-de="Alles aus Free, plus Synchronisierung und Anpassung.">Semua fitur Free, ditambah sync dan personalisasi.</p>
+            <ul>
+              <li data-en="Sync saved hosts and their groups across devices" data-es="Sincroniza hosts guardados y sus grupos entre dispositivos" data-fr="Synchronisez les hôtes enregistrés et leurs groupes entre appareils" data-de="Gespeicherte Hosts und ihre Gruppen geräteübergreifend synchronisieren">Sinkronkan host tersimpan dan pengelompokannya antarperangkat</li>
+              <li data-en="Sync trusted server fingerprints" data-es="Sincroniza huellas de servidores de confianza" data-fr="Synchronisez les empreintes des serveurs de confiance" data-de="Fingerabdrücke vertrauenswürdiger Server synchronisieren">Sinkronkan fingerprint server yang dipercaya</li>
+              <li data-en="Dark, light, or system theme" data-es="Tema oscuro, claro o del sistema" data-fr="Thème sombre, clair ou du système" data-de="Dunkles, helles oder Systemdesign">Tema gelap, terang, atau mengikuti sistem</li>
+              <li data-en="All terminal presets and custom background, text, and cursor colors" data-es="Todos los ajustes de terminal y colores personalizados de fondo, texto y cursor" data-fr="Tous les préréglages et couleurs personnalisées du fond, du texte et du curseur" data-de="Alle Terminalvorlagen und eigene Hintergrund-, Text- und Cursorfarben">Semua preset terminal serta warna latar, teks, dan kursor custom</li>
+            </ul>
+          </article>
+        </div>
+        <p class="plan-note" data-en="Passwords and private keys stay on your device. Empty groups are stored locally. Without Pro access, Tambat uses the default theme." data-es="Las contraseñas y claves privadas permanecen en tu dispositivo. Los grupos vacíos se guardan localmente. Sin Pro, Tambat usa el tema predeterminado." data-fr="Les mots de passe et clés privées restent sur votre appareil. Les groupes vides sont stockés localement. Sans Pro, Tambat utilise le thème par défaut." data-de="Passwörter und private Schlüssel bleiben auf deinem Gerät. Leere Gruppen werden lokal gespeichert. Ohne Pro verwendet Tambat das Standarddesign.">Password dan private key tetap di perangkat Anda. Grup kosong tersimpan lokal. Tanpa akses Pro, Tambat memakai tema default.</p>
+      </section>
+
+      <section class="section showcase" id="tampilan">
+        <div class="section-heading compact">
+          <p class="eyebrow"><span></span> <span data-en="Focus from the start" data-es="Concéntrate desde el principio" data-fr="Concentrez-vous dès le départ" data-de="Von Anfang an fokussiert">Fokus sejak dibuka</span></p>
+          <h2><span data-en="An interface that stays out of your way." data-es="Una interfaz que te deja trabajar." data-fr="Une interface qui vous laisse travailler." data-de="Eine Oberfläche, die dich arbeiten lässt.">Antarmuka yang tidak menghalangi pekerjaan.</span></h2>
+        </div>
+        <div class="showcase-carousel" role="region" aria-label="Tampilan aplikasi Tambat" data-en-aria-label="Tambat app previews" data-es-aria-label="Vistas de la aplicación Tambat" data-fr-aria-label="Aperçus de l’application Tambat" data-de-aria-label="Einblicke in die Tambat-App">
+          <div class="showcase-frame">
+            <div class="showcase-track">
+              <figure class="showcase-slide">
+                <figcaption class="showcase-caption"><span data-en="Organized from the home screen" data-es="Orden desde la pantalla de inicio" data-fr="Tout est organisé dès l’accueil" data-de="Ordnung direkt auf der Startseite">Rapi sejak halaman utama</span><span data-en="Server groups + search" data-es="Grupos de servidores + búsqueda" data-fr="Groupes de serveurs + recherche" data-de="Servergruppen + Suche">Grup server + pencarian</span></figcaption>
+                <img src="./assets/workspace-home.png" alt="Homepage Tambat dengan grup Work dan Project serta pencarian server" data-en-alt="Tambat home screen with Work and Project groups and server search" data-es-alt="Pantalla de inicio de Tambat con grupos Work y Project y búsqueda de servidores" data-fr-alt="Accueil Tambat avec les groupes Work et Project et la recherche de serveurs" data-de-alt="Tambat-Startseite mit den Gruppen Work und Project und der Serversuche" loading="lazy" width="1200" height="800" />
+              </figure>
+              <figure class="showcase-slide">
+                <figcaption class="showcase-caption"><span data-en="Sign in. Sync. Get to work." data-es="Inicia sesión. Sincroniza. A trabajar." data-fr="Connectez-vous. Synchronisez. Travaillez." data-de="Anmelden. Synchronisieren. Loslegen.">Login. Sinkron. Siap bekerja.</span><span data-en="Account + sync · Pro" data-es="Cuenta + sincronización · Pro" data-fr="Compte + synchronisation · Pro" data-de="Konto + Synchronisierung · Pro">Akun + sinkronisasi · Pro</span></figcaption>
+                <img src="./assets/workspace-sync.png" alt="Panel akun Tambat Pro setelah login dengan status data tersinkron" data-en-alt="Tambat Pro account after sign-in with synced data status" data-es-alt="Cuenta Tambat Pro tras iniciar sesión con los datos sincronizados" data-fr-alt="Compte Tambat Pro après connexion avec les données synchronisées" data-de-alt="Tambat-Pro-Konto nach der Anmeldung mit synchronisierten Daten" width="1200" height="800" loading="lazy" />
+              </figure>
+              <figure class="showcase-slide">
+  <figcaption class="showcase-caption"><span data-en="A place for every connection" data-es="Un lugar para cada conexión" data-fr="Une place pour chaque connexion" data-de="Ein Platz für jede Verbindung">Tempat untuk setiap koneksi</span><span data-en="Empty groups + existing connections" data-es="Grupos vacíos + conexiones existentes" data-fr="Groupes vides + connexions existantes" data-de="Leere Gruppen + bestehende Verbindungen">Grup kosong + koneksi yang sudah ada</span></figcaption>
+  <img src="./assets/workspace-group.png" alt="Dialog Tambah grup dengan pilihan koneksi yang sudah ada" data-en-alt="Add group dialog with existing connections to choose from" data-es-alt="Diálogo para añadir un grupo y elegir conexiones existentes" data-fr-alt="Dialogue d’ajout de groupe avec choix de connexions existantes" data-de-alt="Dialog zum Erstellen einer Gruppe mit Auswahl bestehender Verbindungen" loading="lazy" width="1200" height="800" />
+</figure>
+              <figure class="showcase-slide">
+                <figcaption class="showcase-caption"><span data-en="Your next connection, ready" data-es="Tu próxima conexión, lista" data-fr="Votre prochaine connexion est prête" data-de="Bereit für deine nächste Verbindung">Koneksi berikutnya, siap</span><span data-en="Server details + groups" data-es="Datos del servidor + grupos" data-fr="Détails du serveur + groupes" data-de="Serverdetails + Gruppen">Detail server + grup</span></figcaption>
+                <img src="./assets/workspace-host.png" alt="Form server Tambat dengan pengaturan koneksi, grup, dan warna" data-en-alt="Tambat server form with connection, group, and color settings" data-es-alt="Formulario de servidor de Tambat con ajustes de conexión, grupo y color" data-fr-alt="Formulaire de serveur Tambat avec les paramètres de connexion, de groupe et de couleur" data-de-alt="Tambat-Serverformular mit Einstellungen für Verbindung, Gruppe und Farbe" loading="lazy" width="1200" height="800" />
+              </figure>
+              <figure class="showcase-slide">
+                <figcaption class="showcase-caption"><span data-en="Make it yours" data-es="Hazlo tuyo" data-fr="À votre image" data-de="Ganz nach deinem Geschmack">Sesuaikan dengan cara kerja Anda</span><span data-en="Themes + terminal colors · Pro" data-es="Temas + colores del terminal · Pro" data-fr="Thèmes + couleurs du terminal · Pro" data-de="Designs + Terminalfarben · Pro">Tema + warna terminal · Pro</span></figcaption>
+                <img src="./assets/workspace-settings.png" alt="Pengaturan Tambat untuk tema aplikasi dan warna terminal" data-en-alt="Tambat settings for app appearance and terminal colors" data-es-alt="Ajustes de Tambat para la apariencia y los colores del terminal" data-fr-alt="Paramètres Tambat pour l’apparence et les couleurs du terminal" data-de-alt="Tambat-Einstellungen für Darstellung und Terminalfarben" loading="lazy" width="1200" height="800" />
+              </figure>
+            </div>
+          </div>
+          <div class="carousel-controls" hidden>
+            <div class="carousel-dots">
+              <button type="button" data-slide="0" aria-label="Tampilkan homepage" data-en-aria-label="Show home screen" data-es-aria-label="Mostrar inicio" data-fr-aria-label="Afficher l’accueil" data-de-aria-label="Startseite anzeigen" aria-pressed="true"></button>
+              <button type="button" data-slide="1" aria-label="Tampilkan akun dan sinkronisasi" data-en-aria-label="Show account and sync" data-es-aria-label="Mostrar cuenta y sincronización" data-fr-aria-label="Afficher le compte et la synchronisation" data-de-aria-label="Konto und Synchronisierung anzeigen" aria-pressed="false"></button>
+              <button type="button" data-slide="2" aria-label="Tampilkan tambah grup" data-en-aria-label="Show group creation" data-es-aria-label="Mostrar creación de grupos" data-fr-aria-label="Afficher la création de groupe" data-de-aria-label="Gruppenerstellung anzeigen" aria-pressed="false"></button>
+              <button type="button" data-slide="3" aria-label="Tampilkan form server" data-en-aria-label="Show server form" data-es-aria-label="Mostrar formulario de servidor" data-fr-aria-label="Afficher le formulaire de serveur" data-de-aria-label="Serverformular anzeigen" aria-pressed="false"></button>
+              <button type="button" data-slide="4" aria-label="Tampilkan pengaturan" data-en-aria-label="Show settings" data-es-aria-label="Mostrar ajustes" data-fr-aria-label="Afficher les paramètres" data-de-aria-label="Einstellungen anzeigen" aria-pressed="false"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section security">
+        <div>
+          <p class="eyebrow"><span></span> <span data-en="Work with confidence" data-es="Trabaja con tranquilidad" data-fr="Travaillez en toute sérénité" data-de="Entspannt arbeiten">Bekerja lebih tenang</span></p>
+          <h2><span data-en="Your servers. Your control." data-es="Tus servidores. Tú tienes el control." data-fr="Vos serveurs. Vous gardez le contrôle." data-de="Deine Server. Deine Kontrolle.">Server Anda. Kendali Anda.</span></h2>
+        </div>
+        <div class="security-list">
+          <article>
+            <strong><span data-en="Protected credentials" data-es="Credenciales protegidas" data-fr="Identifiants protégés" data-de="Geschützte Zugangsdaten">Kredensial terlindungi</span></strong>
+            <p><span data-en="Save credentials securely on your device so you can connect without typing them in every time." data-es="Guarda tus credenciales de forma segura en tu dispositivo para conectarte sin introducirlas cada vez." data-fr="Enregistrez vos identifiants en toute sécurité sur votre appareil pour vous connecter sans les ressaisir à chaque fois." data-de="Speichere Zugangsdaten sicher auf deinem Gerät, damit du sie beim Verbinden nicht jedes Mal eingeben musst.">Simpan kredensial dengan aman di perangkat Anda agar tidak perlu mengetik ulang setiap kali terhubung.</span></p>
+          </article>
+          <article>
+            <strong><span data-en="Know your connection" data-es="Conoce tu conexión" data-fr="Identifiez votre connexion" data-de="Wisse, womit du dich verbindest">Kenali koneksi Anda</span></strong>
+            <p><span data-en="Get a warning when a server's identity changes, so you can check it before continuing." data-es="Recibe un aviso cuando cambie la identidad de un servidor para comprobarla antes de continuar." data-fr="Recevez une alerte lorsque l’identité d’un serveur change, afin de la vérifier avant de poursuivre." data-de="Erhalte eine Warnung, wenn sich die Identität eines Servers ändert, damit du sie vor dem Fortfahren prüfen kannst.">Dapatkan peringatan saat identitas server berubah, sehingga Anda bisa memeriksanya sebelum melanjutkan koneksi.</span></p>
+          </article>
+          <article>
+            <strong><span data-en="Ready for next time" data-es="Listo para la próxima vez" data-fr="Prêt pour la prochaine session" data-de="Bereit fürs nächste Mal">Siap untuk sesi berikutnya</span></strong>
+            <p><span data-en="Save and organize your servers. Find the one you need and reconnect without entering its details again." data-es="Guarda y organiza tus servidores. Encuentra el que necesitas y vuelve a conectarte sin introducir sus datos de nuevo." data-fr="Enregistrez et organisez vos serveurs. Retrouvez celui qu’il vous faut et reconnectez-vous sans ressaisir ses informations." data-de="Speichere und organisiere deine Server. Finde den passenden und verbinde dich erneut, ohne seine Daten noch einmal einzugeben.">Simpan dan kelompokkan server Anda. Temukan yang dibutuhkan dan hubungkan kembali tanpa mengisi detail dari awal.</span></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="download" id="unduh">
+        <img src="./assets/logo.svg" alt="" width="110" height="72" loading="lazy" />
+        <p class="eyebrow centered"><span></span> <span data-en="Ready to connect?" data-es="¿Listo para conectarte?" data-fr="Prêt à vous connecter ?" data-de="Bereit für die Verbindung?">Siap menambat?</span></p>
+        <h2><span data-en="Make room for better work." data-es="Dale espacio a una mejor forma de trabajar." data-fr="Faites place à une meilleure façon de travailler." data-de="Schaffe Raum für besseres Arbeiten.">Beri ruang untuk kerja yang lebih nyaman.</span></h2>
+        <p><span data-en="Explore Tambat Community Edition, available as a separate project on GitHub." data-es="Descubre Tambat Community Edition, disponible como proyecto independiente en GitHub." data-fr="Découvrez Tambat Community Edition, disponible comme projet distinct sur GitHub." data-de="Entdecke Tambat Community Edition, ein eigenständiges Projekt auf GitHub.">Jelajahi Tambat Community Edition, tersedia sebagai proyek terpisah di GitHub.</span></p>
+        <a class="button button-primary" href="https://github.com/CharisChakim/tambat-ce">
+          <span data-en="View Community Edition" data-es="Ver Community Edition" data-fr="Voir Community Edition" data-de="Community Edition ansehen">Lihat Community Edition</span>
+        </a>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand brand-small" href="#top">
+        <img src="./assets/logo.svg" alt="" width="42" height="28" loading="lazy" />
+        <span>tambat</span>
+      </a>
+      <p><span data-en="A desktop SSH client made in Indonesia." data-es="Un cliente SSH de escritorio creado en Indonesia." data-fr="Un client SSH de bureau créé en Indonésie." data-de="Ein Desktop-SSH-Client aus Indonesien.">SSH client desktop yang dibuat dari Indonesia.</span></p>
+      <div>
+        <a href="https://github.com/CharisChakim/tambat-ce#readme"><span data-en="Guide" data-es="Guía" data-fr="Guide" data-de="Anleitung">Panduan</span></a>
+        <a href="https://github.com/CharisChakim/tambat-ce/issues"><span data-en="Help" data-es="Ayuda" data-fr="Aide" data-de="Hilfe">Bantuan</span></a>
+      </div>
+    </footer>
+  </body>
+</html>
