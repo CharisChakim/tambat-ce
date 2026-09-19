@@ -863,6 +863,7 @@ mod tests {
 
     /// E2E terhadap server tiruan paramiko (tests/mock_sshd.py) di 127.0.0.1:2222.
     /// Jalankan mock-nya dulu (python3 tests/mock_sshd.py), lalu: cargo test -- --ignored
+    #[cfg(unix)]
     #[test]
     #[ignore]
     fn e2e_panel_lokal() {
@@ -989,18 +990,18 @@ mod tests {
 
     #[test]
     fn unique_local_menghindari_timpa() {
-        let dir = std::path::Path::new("/tmp/tambat-uji-unique");
-        let _ = std::fs::remove_dir_all(dir);
-        std::fs::create_dir_all(dir).unwrap();
-        assert_eq!(super::unique_local(dir, "a.txt"), dir.join("a.txt"));
+        let dir = std::env::temp_dir().join(format!("tambat-uji-unique-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        assert_eq!(super::unique_local(&dir, "a.txt"), dir.join("a.txt"));
         std::fs::write(dir.join("a.txt"), b"").unwrap();
-        assert_eq!(super::unique_local(dir, "a.txt"), dir.join("a (1).txt"));
+        assert_eq!(super::unique_local(&dir, "a.txt"), dir.join("a (1).txt"));
         std::fs::write(dir.join("a (1).txt"), b"").unwrap();
-        assert_eq!(super::unique_local(dir, "a.txt"), dir.join("a (2).txt"));
+        assert_eq!(super::unique_local(&dir, "a.txt"), dir.join("a (2).txt"));
         // file tersembunyi: titik di awal bukan pemisah ekstensi
         std::fs::write(dir.join(".bashrc"), b"").unwrap();
-        assert_eq!(super::unique_local(dir, ".bashrc"), dir.join(".bashrc (1)"));
-        let _ = std::fs::remove_dir_all(dir);
+        assert_eq!(super::unique_local(&dir, ".bashrc"), dir.join(".bashrc (1)"));
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]

@@ -1,0 +1,76 @@
+name: Release Tambat CE Desktop
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "ce-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            platform: windows-latest
+            args: "--bundles nsis"
+          - name: Linux x64
+            platform: ubuntu-22.04
+            args: "--bundles appimage,deb,rpm"
+          - name: macOS Apple Silicon
+            platform: macos-latest
+            args: "--target aarch64-apple-darwin --bundles dmg,app"
+          - name: macOS Intel
+            platform: macos-latest
+            args: "--target x86_64-apple-darwin --bundles dmg,app"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ startsWith(matrix.platform, 'macos-') && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build and publish release
+        uses: tauri-apps/tauri-action@v0.5.24
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ce-v__VERSION__
+          releaseName: Tambat Community Edition v__VERSION__
+          releaseBody: |
+            Tambat Community Edition v__VERSION__.
+
+            Unduh installer yang sesuai dengan sistem operasi dan arsitektur perangkat Anda.
+            Build Windows dan macOS belum menggunakan sertifikat publisher komersial.
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}

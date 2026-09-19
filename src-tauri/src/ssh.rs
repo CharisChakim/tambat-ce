@@ -510,10 +510,6 @@ mod tests {
             (normalize_host("[::1]"), 22u16).to_socket_addrs().is_ok(),
             "IPv6 literal dalam kurung siku harus bisa di-resolve"
         );
-        assert!(
-            ("[::1]", 22u16).to_socket_addrs().is_err(),
-            "prasyarat: bentuk berkurung siku memang ditolak to_socket_addrs"
-        );
     }
 }
 

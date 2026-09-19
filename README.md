@@ -2,7 +2,9 @@
   <img src="docs/logo.svg" alt="Logo Tambat — jangkar menambat ke server" width="150">
 </p>
 
-# Tambat
+# Tambat Community Edition
+
+**Rilis stabil: v1.0.0**
 
 **SSH client desktop yang ringan, aman, dan enak dipakai** — terminal, file
 manager (SFTP), dan monitor server jadi satu, berdampingan di tiap tab.
@@ -101,11 +103,38 @@ https://tauri.app/start/prerequisites/
 ```bash
 npm install
 npm run tauri dev      # mode pengembangan (hot reload)
-npm run tauri build    # build rilis: .deb, .rpm, dan AppImage di src-tauri/target/release/bundle/
+npm run tauri build    # build semua format rilis yang didukung OS aktif
+```
+
+Untuk membuat installer NSIS di Windows saja:
+
+```bash
+npm run tauri build -- --bundles nsis
 ```
 
 Build pertama mengompilasi banyak crate Rust — bisa beberapa menit. Build
-berikutnya jauh lebih cepat.
+berikutnya jauh lebih cepat. Format installer mengikuti sistem operasi tempat
+build dijalankan: NSIS/MSI di Windows, AppImage/DEB/RPM di Linux, dan DMG/app
+bundle di macOS.
+
+## Versi dan rilis desktop
+
+Community Edition memakai versi SemVer sendiri dan tag Git berawalan `ce-v`,
+misalnya `ce-v1.0.0`. Skema ini memisahkan riwayat rilis CE dari produk utama,
+yang memakai satu installer untuk akun Free dan Pro.
+
+Workflow `.github/workflows/release-desktop.yml` membangun installer Windows
+x64, Linux x64, macOS Apple Silicon, dan macOS Intel. Jalankan workflow secara
+manual atau push tag yang cocok dengan versi aplikasi:
+
+```bash
+git tag ce-v1.0.0
+git push origin ce-v1.0.0
+```
+
+Installer Windows dan macOS pada rilis komunitas awal belum memakai sertifikat
+publisher komersial. macOS memakai ad-hoc signing sehingga pengguna masih perlu
+mengizinkan aplikasi melalui Privacy & Security saat pertama dibuka.
 
 ## Arsitektur singkat
 
