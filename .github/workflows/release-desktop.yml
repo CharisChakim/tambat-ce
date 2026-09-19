@@ -27,7 +27,7 @@ jobs:
             platform: macos-latest
             args: "--target aarch64-apple-darwin --bundles dmg,app"
           - name: macOS Intel
-            platform: macos-latest
+            platform: macos-15-intel
             args: "--target x86_64-apple-darwin --bundles dmg,app"
 
     steps:
