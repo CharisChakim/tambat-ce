@@ -778,8 +778,9 @@ footer p {
 
 footer div {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 24px;
+  gap: 12px 24px;
 }
 
 @media (max-width: 960px) {
@@ -955,4 +956,83 @@ footer div {
   .plan-card {
     padding: 22px;
   }
+}
+
+/* Legal pages: privacy, terms, refund */
+.legal {
+  width: min(calc(100% - 40px), 760px);
+  margin: 0 auto;
+  padding: 40px 0 90px;
+}
+.legal h1 {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  line-height: 1.15;
+}
+.legal h2 {
+  margin: 40px 0 10px;
+  font-size: 1.25rem;
+}
+.legal h3 {
+  margin: 26px 0 6px;
+  font-size: 1rem;
+  color: var(--amber-soft);
+}
+.legal p,
+.legal li {
+  color: #c5d6dd;
+}
+.legal ul {
+  padding-left: 22px;
+}
+.legal li + li {
+  margin-top: 6px;
+}
+.legal a {
+  color: var(--amber);
+}
+.legal-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.legal-lang {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 24px 0 8px;
+}
+.legal-lang a {
+  padding: 8px 14px;
+  border: 1px solid var(--line-bright);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.legal article + article {
+  margin-top: 70px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+}
+.legal-note {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  font-size: 0.9rem;
+}
+nav a[aria-current="page"] {
+  color: var(--amber);
+}
+/* The landing page hides its first two nav links on phones; legal pages need them all. */
+.legal-nav a:first-child,
+.legal-nav a:nth-child(2) {
+  display: inline;
+}
+.legal-lang a:first-child,
+.legal-lang a:nth-child(2) {
+  display: inline-block;
 }
