@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#091319" />
     <meta
       name="description"
-      content="Tambat, alternatif Termius untuk SSH dan SFTP. Kelompokkan server dan kelola file gratis. Tambat Pro menambahkan sync antarperangkat dan tema custom." data-en-content="Tambat, a Termius alternative for SSH and SFTP. Group servers and manage files for free. Tambat Pro adds cross-device sync and custom themes." data-es-content="Tambat, una alternativa a Termius para SSH y SFTP. Agrupa servidores y gestiona archivos gratis. Tambat Pro añade sincronización entre dispositivos y temas personalizados." data-fr-content="Tambat, une alternative à Termius pour SSH et SFTP. Regroupez vos serveurs et gérez vos fichiers gratuitement. Tambat Pro ajoute la synchronisation et les thèmes personnalisés." data-de-content="Tambat, eine Termius-Alternative für SSH und SFTP. Server kostenlos gruppieren und Dateien verwalten. Tambat Pro ergänzt Gerätesynchronisierung und eigene Themes."
+      content="Tambat, alternatif Termius untuk SSH dan SFTP. Kelola server dan file gratis. Tambat Pro menambahkan grup server, sync antarperangkat, dan tema custom." data-en-content="Tambat, a Termius alternative for SSH and SFTP. Manage servers and files for free. Tambat Pro adds server groups, cross-device sync, and custom themes." data-es-content="Tambat, una alternativa a Termius para SSH y SFTP. Gestiona servidores y archivos gratis. Tambat Pro añade grupos de servidores, sincronización entre dispositivos y temas personalizados." data-fr-content="Tambat, une alternative à Termius pour SSH et SFTP. Gérez vos serveurs et vos fichiers gratuitement. Tambat Pro ajoute les groupes de serveurs, la synchronisation et les thèmes personnalisés." data-de-content="Tambat, eine Termius-Alternative für SSH und SFTP. Server und Dateien kostenlos verwalten. Tambat Pro ergänzt Servergruppen, Gerätesynchronisierung und eigene Themes."
     />
-    <meta property="og:title" content="Tambat — SSH client desktop" data-en-content="Tambat — Desktop SSH client" data-es-content="Tambat — Cliente SSH de escritorio" data-fr-content="Tambat — Client SSH de bureau" data-de-content="Tambat — SSH-Client für den Desktop" />
+    <meta property="og:title" content="Tambat — Alternatif Termius yang ringan untuk SSH dan SFTP" data-en-content="Tambat — Lightweight Termius alternative for SSH and SFTP" data-es-content="Tambat — Alternativa ligera a Termius para SSH y SFTP" data-fr-content="Tambat — Alternative légère à Termius pour SSH et SFTP" data-de-content="Tambat — Schlanke Termius-Alternative für SSH und SFTP" />
     <meta
       property="og:description"
       content="Alternatif Termius untuk SSH dan SFTP dalam satu workspace. Mulai gratis, dengan sync antarperangkat dan tema custom di Tambat Pro." data-en-content="A Termius alternative for SSH and SFTP in one workspace. Start free, with cross-device sync and custom themes available in Tambat Pro." data-es-content="Una alternativa a Termius con SSH y SFTP en un solo espacio. Empieza gratis; Tambat Pro ofrece sincronización entre dispositivos y temas personalizados." data-fr-content="Une alternative à Termius avec SSH et SFTP dans un seul espace. Commencez gratuitement ; Tambat Pro ajoute la synchronisation entre appareils et les thèmes personnalisés." data-de-content="Eine Termius-Alternative für SSH und SFTP in einem Arbeitsbereich. Kostenlos starten, mit Gerätesynchronisierung und eigenen Themes in Tambat Pro."
@@ -18,9 +18,10 @@
     <meta property="og:url" content="https://tambat.world/" />
     <link rel="icon" href="./assets/app-icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
-    <title data-en="Tambat — Desktop SSH client" data-es="Tambat — Cliente SSH de escritorio" data-fr="Tambat — Client SSH de bureau" data-de="Tambat — SSH-Client für den Desktop">Tambat — SSH client desktop</title>
+    <title data-en="Tambat — Lightweight Termius alternative for SSH and SFTP" data-es="Tambat — Alternativa ligera a Termius para SSH y SFTP" data-fr="Tambat — Alternative légère à Termius pour SSH et SFTP" data-de="Tambat — Schlanke Termius-Alternative für SSH und SFTP">Tambat — Alternatif Termius yang ringan untuk SSH dan SFTP</title>
     <script src="./language.js" defer></script>
     <script src="./carousel.js" defer></script>
+    <script src="./download.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main"><span data-en="Skip to content" data-es="Saltar al contenido" data-fr="Aller au contenu" data-de="Zum Inhalt springen">Lewati ke konten</span></a>
@@ -90,10 +91,11 @@
       <section class="hero" id="top">
         <div class="hero-copy">
           <p class="eyebrow"><span></span> <span data-en="Desktop SSH client" data-es="Cliente SSH de escritorio" data-fr="Client SSH de bureau" data-de="SSH-Client für den Desktop">SSH client desktop</span></p>
-          <h1><span data-en="SSH and SFTP." data-es="SSH y SFTP." data-fr="SSH et SFTP." data-de="SSH und SFTP.">SSH dan SFTP.</span><br /><em><span data-en="One workspace." data-es="Un solo espacio." data-fr="Un seul espace." data-de="Ein Arbeitsbereich.">Satu workspace.</span></em></h1>
-          <p class="hero-lead" data-en="A Termius alternative for organizing servers, opening terminals, and managing files. Start free, then choose Tambat Pro for cross-device sync and custom themes." data-es="Una alternativa a Termius para organizar servidores, abrir terminales y gestionar archivos. Empieza gratis y elige Tambat Pro para sincronizar entre dispositivos y personalizar tus temas." data-fr="Une alternative à Termius pour organiser vos serveurs, ouvrir des terminaux et gérer vos fichiers. Commencez gratuitement, puis choisissez Tambat Pro pour la synchronisation entre appareils et les thèmes personnalisés." data-de="Eine Termius-Alternative zum Organisieren von Servern, Öffnen von Terminals und Verwalten von Dateien. Starte kostenlos und wähle Tambat Pro für Gerätesynchronisierung und eigene Themes.">
-            Alternatif Termius untuk mengelompokkan server, membuka terminal, dan mengelola file.
-            Mulai gratis, lalu gunakan Tambat Pro untuk sinkronisasi antarperangkat dan tema custom.
+          <h1><span data-en="All your servers." data-es="Todos tus servidores." data-fr="Tous vos serveurs." data-de="Alle deine Server.">Semua servermu,</span><br /><em><span data-en="One place." data-es="Un solo lugar." data-fr="Un seul endroit." data-de="An einem Ort.">tertambat di satu tempat.</span></em></h1>
+          <p class="hero-lead" data-en="A lightweight Termius alternative. Terminal, SFTP, and live server stats sit side by side in every tab, and your passwords and keys never leave your device. Start free; Pro with cross-device sync and custom themes is coming soon." data-es="Una alternativa ligera a Termius. Terminal, SFTP y estadísticas del servidor en vivo, lado a lado en cada pestaña, y tus contraseñas y claves nunca salen de tu dispositivo. Empieza gratis; Pro, con sincronización entre dispositivos y temas personalizados, llegará pronto." data-fr="Une alternative légère à Termius. Terminal, SFTP et statistiques serveur en direct côte à côte dans chaque onglet, et vos mots de passe et clés ne quittent jamais votre appareil. Commencez gratuitement ; Pro, avec la synchronisation entre appareils et les thèmes personnalisés, arrive bientôt." data-de="Eine schlanke Termius-Alternative. Terminal, SFTP und Live-Serverstatistiken nebeneinander in jedem Tab, und deine Passwörter und Schlüssel verlassen nie dein Gerät. Starte kostenlos; Pro mit Gerätesynchronisierung und eigenen Themes kommt bald.">
+            Alternatif Termius yang ringan. Terminal, SFTP, dan statistik server live berdampingan di setiap tab,
+            dan password serta key Anda tidak pernah meninggalkan perangkat. Mulai gratis; Tambat Pro dengan
+            sinkronisasi antarperangkat dan tema custom segera hadir.
           </p>
           <div class="hero-actions">
             <a class="button button-primary" href="#unduh">
@@ -121,7 +123,7 @@
 
       <section class="proof" aria-label="Manfaat Tambat" data-en-aria-label="Why Tambat" data-es-aria-label="Por qué Tambat" data-fr-aria-label="Pourquoi Tambat" data-de-aria-label="Warum Tambat">
         <p><span data-en="Stay in control" data-es="Mantén el control" data-fr="Gardez le contrôle" data-de="Behalte die Kontrolle">Tetap dalam kendali</span></p>
-        <strong data-en="Organized server groups" data-es="Grupos de servidores organizados" data-fr="Des groupes de serveurs organisés" data-de="Übersichtliche Servergruppen">Grup server yang rapi</strong>
+        <strong data-en="Organized server groups · Pro" data-es="Grupos de servidores organizados · Pro" data-fr="Des groupes de serveurs organisés · Pro" data-de="Übersichtliche Servergruppen · Pro">Grup server yang rapi · Pro</strong>
         <span></span>
         <strong data-en="One workspace" data-es="Un solo espacio de trabajo" data-fr="Un seul espace de travail" data-de="Ein Arbeitsbereich">Satu ruang kerja</strong>
         <span></span>
@@ -131,7 +133,7 @@
 
       <section class="section sync-showcase" id="sinkronisasi">
         <div class="sync-copy">
-          <p class="eyebrow"><span></span> <span data-en="Sync across devices · Pro" data-es="Sincronización entre dispositivos · Pro" data-fr="Synchronisation entre appareils · Pro" data-de="Geräteübergreifende Synchronisierung · Pro">Sinkron antarperangkat · Pro</span></p>
+          <p class="eyebrow"><span></span> <span data-en="Sync across devices · Pro · Coming soon" data-es="Sincronización entre dispositivos · Pro · Próximamente" data-fr="Synchronisation entre appareils · Pro · Bientôt" data-de="Geräteübergreifende Synchronisierung · Pro · Demnächst">Sinkron antarperangkat · Pro · Segera hadir</span></p>
           <h2><span data-en="Different device. Same workspace." data-es="Otro dispositivo. Tu mismo espacio." data-fr="Un autre appareil. Le même espace." data-de="Anderes Gerät. Gleicher Arbeitsbereich.">Beda perangkat. Workspace yang sama.</span></h2>
           <p><span data-en="Sign in to the same Tambat Pro account on another laptop or desktop. Your server list and groups sync across devices, without setting everything up again." data-es="Inicia sesión con la misma cuenta Tambat Pro en otro portátil o equipo de escritorio. Tu lista de servidores y grupos se sincroniza sin tener que configurarlo todo de nuevo." data-fr="Connectez-vous au même compte Tambat Pro sur un autre ordinateur. Vos serveurs et groupes se synchronisent sans avoir à tout reconfigurer." data-de="Melde dich auf einem anderen Laptop oder Desktop mit demselben Tambat-Pro-Konto an. Deine Serverliste und Gruppen werden synchronisiert, ohne alles neu einzurichten.">Masuk dengan akun Tambat Pro yang sama di laptop atau desktop lain. Daftar server dan grup Anda ikut tersinkron, tanpa menyusun semuanya dari awal.</span></p>
           <ul class="sync-benefits">
@@ -139,7 +141,7 @@
             <li><span data-en="Find the servers and groups you already organized" data-es="Encuentra los servidores y grupos que ya organizaste" data-fr="Retrouvez vos serveurs et groupes déjà organisés" data-de="Vertraute Server und Gruppen wiederfinden">Temukan server dan grup yang sudah Anda tata</span></li>
             <li><span data-en="Check sync status right in your account panel" data-es="Consulta el estado de sincronización en tu cuenta" data-fr="Consultez l’état de synchronisation dans votre compte" data-de="Synchronisierungsstatus direkt im Kontobereich prüfen">Cek status sync langsung dari panel akun</span></li>
           </ul>
-          <p class="sync-note"><span data-en="Available on Windows, macOS, and Linux with Tambat Pro. Passwords and private keys stay on each device." data-es="Disponible en Windows, macOS y Linux con Tambat Pro. Las contraseñas y claves privadas permanecen en cada dispositivo." data-fr="Disponible sur Windows, macOS et Linux avec Tambat Pro. Les mots de passe et clés privées restent sur chaque appareil." data-de="Mit Tambat Pro auf Windows, macOS und Linux verfügbar. Passwörter und private Schlüssel bleiben auf dem jeweiligen Gerät.">Tersedia di Windows, macOS, dan Linux dengan Tambat Pro. Password dan private key tetap tersimpan di perangkat masing-masing.</span></p>
+          <p class="sync-note"><span data-en="Coming soon to Tambat Pro on Windows, macOS, and Linux. Passwords and private keys stay on each device." data-es="Próximamente en Tambat Pro para Windows, macOS y Linux. Las contraseñas y claves privadas permanecen en cada dispositivo." data-fr="Bientôt dans Tambat Pro sur Windows, macOS et Linux. Les mots de passe et clés privées restent sur chaque appareil." data-de="Demnächst mit Tambat Pro auf Windows, macOS und Linux. Passwörter und private Schlüssel bleiben auf dem jeweiligen Gerät.">Segera hadir di Tambat Pro untuk Windows, macOS, dan Linux. Password dan private key tetap tersimpan di perangkat masing-masing.</span></p>
         </div>
         <figure class="sync-preview showcase-frame">
           <figcaption class="showcase-caption"><span data-en="After sign-in · Pro account" data-es="Tras iniciar sesión · Cuenta Pro" data-fr="Après connexion · Compte Pro" data-de="Nach der Anmeldung · Pro-Konto">Setelah login · Akun Pro</span></figcaption>
@@ -157,7 +159,7 @@
         <div class="feature-grid">
           <article class="feature-card">
             <div class="feature-icon" aria-hidden="true">▦</div>
-            <h3><span data-en="A home for every project" data-es="Un lugar para cada proyecto" data-fr="Une place pour chaque projet" data-de="Ein Platz für jedes Projekt">Setiap proyek punya tempat</span></h3>
+            <h3><span data-en="A home for every project" data-es="Un lugar para cada proyecto" data-fr="Une place pour chaque projet" data-de="Ein Platz für jedes Projekt">Setiap proyek punya tempat</span> <span class="feature-pro">PRO</span></h3>
             <p><span data-en="Group servers by work or project right on your home screen. Drag a server into another group, or search to find it instantly." data-es="Agrupa servidores por trabajo o proyecto en la pantalla de inicio. Arrastra un servidor a otro grupo o encuéntralo al instante con la búsqueda." data-fr="Regroupez vos serveurs par activité ou projet sur l’accueil. Glissez un serveur dans un autre groupe ou trouvez-le instantanément avec la recherche." data-de="Gruppiere Server nach Arbeit oder Projekt direkt auf der Startseite. Ziehe einen Server in eine andere Gruppe oder finde ihn sofort über die Suche.">Kelompokkan server berdasarkan pekerjaan atau proyek langsung di halaman utama. Seret server ke grup lain, atau gunakan pencarian untuk menemukannya dengan cepat.</span></p>
             <div class="group-preview" role="img" aria-label="Contoh grup Work dan Project dengan server work-api, work-db, dan project-dev" data-en-aria-label="Example Work and Project groups with work-api, work-db, and project-dev servers" data-es-aria-label="Ejemplo de grupos Work y Project con servidores work-api, work-db y project-dev" data-fr-aria-label="Exemple des groupes Work et Project avec les serveurs work-api, work-db et project-dev" data-de-aria-label="Beispielgruppen Work und Project mit den Servern work-api, work-db und project-dev">
               <div>
@@ -215,15 +217,16 @@
             <p data-en="Your daily SSH workspace, on this device." data-es="Tu espacio SSH diario, en este dispositivo." data-fr="Votre espace SSH quotidien, sur cet appareil." data-de="Dein SSH-Arbeitsbereich für jeden Tag, auf diesem Gerät.">Workspace SSH sehari-hari, di perangkat ini.</p>
             <ul>
               <li data-en="SSH terminal, multiple sessions, and SFTP" data-es="Terminal SSH, varias sesiones y SFTP" data-fr="Terminal SSH, sessions multiples et SFTP" data-de="SSH-Terminal, mehrere Sitzungen und SFTP">Terminal SSH, beberapa sesi, dan SFTP</li>
-              <li data-en="Server groups, drag and drop, and search" data-es="Grupos de servidores, arrastrar y soltar y búsqueda" data-fr="Groupes de serveurs, glisser-déposer et recherche" data-de="Servergruppen, Drag-and-drop und Suche">Grup server, drag and drop, dan pencarian</li>
+              <li data-en="Instant server search" data-es="Búsqueda instantánea de servidores" data-fr="Recherche instantanée de serveurs" data-de="Sofortige Serversuche">Pencarian server instan</li>
               <li data-en="Default dark theme and Dermaga terminal colors" data-es="Tema oscuro predeterminado y colores Dermaga" data-fr="Thème sombre par défaut et couleurs de terminal Dermaga" data-de="Standard-Dunkeldesign und Dermaga-Terminalfarben">Tema gelap default dan warna terminal Dermaga</li>
               <li data-en="Local MCP integration for allowed host metadata" data-es="Integración MCP local para los metadatos de hosts permitidos" data-fr="Intégration MCP locale pour les métadonnées des hôtes autorisés" data-de="Lokale MCP-Integration für Metadaten freigegebener Hosts">Integrasi MCP lokal untuk metadata host yang diizinkan</li>
             </ul>
           </article>
           <article class="plan-card plan-card-pro">
-            <h3>Tambat Pro <span class="feature-pro">PRO</span></h3>
+            <h3>Tambat Pro <span class="feature-pro">PRO</span> <span class="plan-soon" data-en="Coming soon" data-es="Próximamente" data-fr="Bientôt" data-de="Demnächst">Segera hadir</span></h3>
             <p data-en="Everything in Free, plus sync and personalization." data-es="Todo lo de Free, más sincronización y personalización." data-fr="Tout Free, avec synchronisation et personnalisation." data-de="Alles aus Free, plus Synchronisierung und Anpassung.">Semua fitur Free, ditambah sync dan personalisasi.</p>
             <ul>
+              <li data-en="Server groups and drag and drop" data-es="Grupos de servidores y arrastrar y soltar" data-fr="Groupes de serveurs et glisser-déposer" data-de="Servergruppen und Drag-and-drop">Grup server dan drag and drop</li>
               <li data-en="Sync saved hosts and their groups across devices" data-es="Sincroniza hosts guardados y sus grupos entre dispositivos" data-fr="Synchronisez les hôtes enregistrés et leurs groupes entre appareils" data-de="Gespeicherte Hosts und ihre Gruppen geräteübergreifend synchronisieren">Sinkronkan host tersimpan dan pengelompokannya antarperangkat</li>
               <li data-en="Sync trusted server fingerprints" data-es="Sincroniza huellas de servidores de confianza" data-fr="Synchronisez les empreintes des serveurs de confiance" data-de="Fingerabdrücke vertrauenswürdiger Server synchronisieren">Sinkronkan fingerprint server yang dipercaya</li>
               <li data-en="Dark, light, or system theme" data-es="Tema oscuro, claro o del sistema" data-fr="Thème sombre, clair ou du système" data-de="Dunkles, helles oder Systemdesign">Tema gelap, terang, atau mengikuti sistem</li>
@@ -231,7 +234,7 @@
             </ul>
           </article>
         </div>
-        <p class="plan-note" data-en="Passwords and private keys stay on your device. Empty groups are stored locally. Without Pro access, Tambat uses the default theme." data-es="Las contraseñas y claves privadas permanecen en tu dispositivo. Los grupos vacíos se guardan localmente. Sin Pro, Tambat usa el tema predeterminado." data-fr="Les mots de passe et clés privées restent sur votre appareil. Les groupes vides sont stockés localement. Sans Pro, Tambat utilise le thème par défaut." data-de="Passwörter und private Schlüssel bleiben auf deinem Gerät. Leere Gruppen werden lokal gespeichert. Ohne Pro verwendet Tambat das Standarddesign.">Password dan private key tetap di perangkat Anda. Grup kosong tersimpan lokal. Tanpa akses Pro, Tambat memakai tema default.</p>
+        <p class="plan-note" data-en="Passwords and private keys stay on your device. Without Pro access, Tambat shows all hosts in a single list and uses the default theme; your groups stay saved." data-es="Las contraseñas y claves privadas permanecen en tu dispositivo. Sin Pro, Tambat muestra todos los hosts en una sola lista y usa el tema predeterminado; tus grupos se conservan." data-fr="Les mots de passe et clés privées restent sur votre appareil. Sans Pro, Tambat affiche tous les hôtes dans une seule liste et utilise le thème par défaut ; vos groupes sont conservés." data-de="Passwörter und private Schlüssel bleiben auf deinem Gerät. Ohne Pro zeigt Tambat alle Hosts in einer Liste und verwendet das Standarddesign; deine Gruppen bleiben gespeichert.">Password dan private key tetap di perangkat Anda. Tanpa akses Pro, Tambat menampilkan semua host dalam satu daftar dan memakai tema default; grup Anda tetap tersimpan.</p>
       </section>
 
       <section class="section showcase" id="tampilan">
@@ -243,7 +246,7 @@
           <div class="showcase-frame">
             <div class="showcase-track">
               <figure class="showcase-slide">
-                <figcaption class="showcase-caption"><span data-en="Organized from the home screen" data-es="Orden desde la pantalla de inicio" data-fr="Tout est organisé dès l’accueil" data-de="Ordnung direkt auf der Startseite">Rapi sejak halaman utama</span><span data-en="Server groups + search" data-es="Grupos de servidores + búsqueda" data-fr="Groupes de serveurs + recherche" data-de="Servergruppen + Suche">Grup server + pencarian</span></figcaption>
+                <figcaption class="showcase-caption"><span data-en="Organized from the home screen" data-es="Orden desde la pantalla de inicio" data-fr="Tout est organisé dès l’accueil" data-de="Ordnung direkt auf der Startseite">Rapi sejak halaman utama</span><span data-en="Server groups · Pro" data-es="Grupos de servidores · Pro" data-fr="Groupes de serveurs · Pro" data-de="Servergruppen · Pro">Grup server · Pro</span></figcaption>
                 <img src="./assets/workspace-home.png" alt="Homepage Tambat dengan grup Work dan Project serta pencarian server" data-en-alt="Tambat home screen with Work and Project groups and server search" data-es-alt="Pantalla de inicio de Tambat con grupos Work y Project y búsqueda de servidores" data-fr-alt="Accueil Tambat avec les groupes Work et Project et la recherche de serveurs" data-de-alt="Tambat-Startseite mit den Gruppen Work und Project und der Serversuche" loading="lazy" width="1200" height="800" />
               </figure>
               <figure class="showcase-slide">
@@ -251,7 +254,7 @@
                 <img src="./assets/workspace-sync.png" alt="Panel akun Tambat Pro setelah login dengan status data tersinkron" data-en-alt="Tambat Pro account after sign-in with synced data status" data-es-alt="Cuenta Tambat Pro tras iniciar sesión con los datos sincronizados" data-fr-alt="Compte Tambat Pro après connexion avec les données synchronisées" data-de-alt="Tambat-Pro-Konto nach der Anmeldung mit synchronisierten Daten" width="1200" height="800" loading="lazy" />
               </figure>
               <figure class="showcase-slide">
-  <figcaption class="showcase-caption"><span data-en="A place for every connection" data-es="Un lugar para cada conexión" data-fr="Une place pour chaque connexion" data-de="Ein Platz für jede Verbindung">Tempat untuk setiap koneksi</span><span data-en="Empty groups + existing connections" data-es="Grupos vacíos + conexiones existentes" data-fr="Groupes vides + connexions existantes" data-de="Leere Gruppen + bestehende Verbindungen">Grup kosong + koneksi yang sudah ada</span></figcaption>
+  <figcaption class="showcase-caption"><span data-en="A place for every connection" data-es="Un lugar para cada conexión" data-fr="Une place pour chaque connexion" data-de="Ein Platz für jede Verbindung">Tempat untuk setiap koneksi</span><span data-en="Empty groups + existing connections · Pro" data-es="Grupos vacíos + conexiones existentes · Pro" data-fr="Groupes vides + connexions existantes · Pro" data-de="Leere Gruppen + bestehende Verbindungen · Pro">Grup kosong + koneksi yang sudah ada · Pro</span></figcaption>
   <img src="./assets/workspace-group.png" alt="Dialog Tambah grup dengan pilihan koneksi yang sudah ada" data-en-alt="Add group dialog with existing connections to choose from" data-es-alt="Diálogo para añadir un grupo y elegir conexiones existentes" data-fr-alt="Dialogue d’ajout de groupe avec choix de connexions existantes" data-de-alt="Dialog zum Erstellen einer Gruppe mit Auswahl bestehender Verbindungen" loading="lazy" width="1200" height="800" />
 </figure>
               <figure class="showcase-slide">
@@ -292,7 +295,7 @@
           </article>
           <article>
             <strong><span data-en="Ready for next time" data-es="Listo para la próxima vez" data-fr="Prêt pour la prochaine session" data-de="Bereit fürs nächste Mal">Siap untuk sesi berikutnya</span></strong>
-            <p><span data-en="Save and organize your servers. Find the one you need and reconnect without entering its details again." data-es="Guarda y organiza tus servidores. Encuentra el que necesitas y vuelve a conectarte sin introducir sus datos de nuevo." data-fr="Enregistrez et organisez vos serveurs. Retrouvez celui qu’il vous faut et reconnectez-vous sans ressaisir ses informations." data-de="Speichere und organisiere deine Server. Finde den passenden und verbinde dich erneut, ohne seine Daten noch einmal einzugeben.">Simpan dan kelompokkan server Anda. Temukan yang dibutuhkan dan hubungkan kembali tanpa mengisi detail dari awal.</span></p>
+            <p><span data-en="Save and organize your servers. Find the one you need and reconnect without entering its details again." data-es="Guarda y organiza tus servidores. Encuentra el que necesitas y vuelve a conectarte sin introducir sus datos de nuevo." data-fr="Enregistrez et organisez vos serveurs. Retrouvez celui qu’il vous faut et reconnectez-vous sans ressaisir ses informations." data-de="Speichere und organisiere deine Server. Finde den passenden und verbinde dich erneut, ohne seine Daten noch einmal einzugeben.">Simpan dan atur server Anda. Temukan yang dibutuhkan dan hubungkan kembali tanpa mengisi detail dari awal.</span></p>
           </article>
         </div>
       </section>
@@ -300,11 +303,21 @@
       <section class="download" id="unduh">
         <img src="./assets/logo.svg" alt="" width="110" height="72" loading="lazy" />
         <p class="eyebrow centered"><span></span> <span data-en="Ready to connect?" data-es="¿Listo para conectarte?" data-fr="Prêt à vous connecter ?" data-de="Bereit für die Verbindung?">Siap menambat?</span></p>
-        <h2><span data-en="Make room for better work." data-es="Dale espacio a una mejor forma de trabajar." data-fr="Faites place à une meilleure façon de travailler." data-de="Schaffe Raum für besseres Arbeiten.">Beri ruang untuk kerja yang lebih nyaman.</span></h2>
-        <p><span data-en="Explore Tambat Community Edition, available as a separate project on GitHub." data-es="Descubre Tambat Community Edition, disponible como proyecto independiente en GitHub." data-fr="Découvrez Tambat Community Edition, disponible comme projet distinct sur GitHub." data-de="Entdecke Tambat Community Edition, ein eigenständiges Projekt auf GitHub.">Jelajahi Tambat Community Edition, tersedia sebagai proyek terpisah di GitHub.</span></p>
-        <a class="button button-primary" href="https://github.com/CharisChakim/tambat-ce">
-          <span data-en="View Community Edition" data-es="Ver Community Edition" data-fr="Voir Community Edition" data-de="Community Edition ansehen">Lihat Community Edition</span>
-        </a>
+        <h2><span data-en="Download Tambat" data-es="Descarga Tambat" data-fr="Télécharger Tambat" data-de="Tambat herunterladen">Unduh Tambat</span> <span class="download-version" hidden></span></h2>
+        <p><span data-en="Free for Windows, macOS, and Linux." data-es="Gratis para Windows, macOS y Linux." data-fr="Gratuit pour Windows, macOS et Linux." data-de="Kostenlos für Windows, macOS und Linux.">Gratis untuk Windows, macOS, dan Linux.</span></p>
+        <div class="download-grid">
+          <a class="download-option" data-asset="windows" href="https://github.com/CharisChakim/tambat-releases/releases/latest"><strong>Windows</strong><span>10 / 11 · x64</span></a>
+          <a class="download-option" data-asset="mac-arm" href="https://github.com/CharisChakim/tambat-releases/releases/latest"><strong>macOS</strong><span>Apple Silicon</span></a>
+          <a class="download-option" data-asset="mac-intel" href="https://github.com/CharisChakim/tambat-releases/releases/latest"><strong>macOS</strong><span>Intel</span></a>
+          <a class="download-option" data-asset="linux-appimage" href="https://github.com/CharisChakim/tambat-releases/releases/latest"><strong>Linux</strong><span>AppImage · x64</span></a>
+        </div>
+        <p class="download-more"><span data-en="Also for Linux:" data-es="También para Linux:" data-fr="Aussi pour Linux :" data-de="Außerdem für Linux:">Juga untuk Linux:</span> <a data-asset="linux-deb" href="https://github.com/CharisChakim/tambat-releases/releases/latest">.deb</a> · <a data-asset="linux-rpm" href="https://github.com/CharisChakim/tambat-releases/releases/latest">.rpm</a> · <a href="https://github.com/CharisChakim/tambat-releases/releases"><span data-en="All releases" data-es="Todas las versiones" data-fr="Toutes les versions" data-de="Alle Versionen">Semua rilis</span></a></p>
+        <p class="download-note"><span data-en="Installers aren't code-signed yet. Windows: More info → Run anyway. macOS: System Settings → Privacy &amp; Security → Open Anyway." data-es="Los instaladores aún no están firmados. Windows: Más información → Ejecutar de todas formas. macOS: Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente." data-fr="Les installateurs ne sont pas encore signés. Windows : Informations complémentaires → Exécuter quand même. macOS : Réglages Système → Confidentialité et sécurité → Ouvrir quand même." data-de="Die Installer sind noch nicht signiert. Windows: Weitere Informationen → Trotzdem ausführen. macOS: Systemeinstellungen → Datenschutz &amp; Sicherheit → Dennoch öffnen.">Installer belum ditandatangani sertifikat komersial. Windows: klik More info → Run anyway. macOS: buka System Settings → Privacy &amp; Security → Open Anyway.</span></p>
+        <div class="download-ce">
+          <h3>Tambat Community Edition</h3>
+          <p><span data-en="Prefer open source? The MIT-licensed edition with the core SSH terminal and SFTP, no account and no Pro features." data-es="¿Prefieres código abierto? La edición con licencia MIT con el terminal SSH y SFTP esenciales, sin cuenta y sin funciones Pro." data-fr="Vous préférez l’open source ? L’édition sous licence MIT avec le terminal SSH et SFTP essentiels, sans compte ni fonctionnalités Pro." data-de="Lieber Open Source? Die MIT-lizenzierte Edition mit SSH-Terminal und SFTP als Kern, ohne Konto und ohne Pro-Funktionen.">Lebih suka open source? Edisi berlisensi MIT dengan inti terminal SSH dan SFTP, tanpa akun dan tanpa fitur Pro.</span></p>
+          <a class="button button-secondary" href="https://github.com/CharisChakim/tambat-ce"><span data-en="View on GitHub" data-es="Ver en GitHub" data-fr="Voir sur GitHub" data-de="Auf GitHub ansehen">Lihat di GitHub</span></a>
+        </div>
       </section>
     </main>
 
