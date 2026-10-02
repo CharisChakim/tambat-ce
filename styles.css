@@ -1106,6 +1106,36 @@ nav a[aria-current="page"] {
   margin-bottom: 0;
   font-size: 0.82rem;
 }
+.mac-install-guide {
+  width: min(100%, 640px);
+  margin-top: 24px;
+  padding: 20px 24px;
+  border: 1px solid var(--line-bright);
+  border-radius: 12px;
+  background: var(--panel);
+  text-align: left;
+  font-size: 0.9rem;
+  scroll-margin-top: 100px;
+}
+.mac-install-guide summary {
+  color: var(--text);
+  font-weight: 650;
+  cursor: pointer;
+}
+.mac-install-guide p {
+  margin: 16px 0;
+  color: var(--muted);
+}
+.mac-install-guide ol {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+.mac-install-guide li + li {
+  margin-top: 10px;
+}
+.mac-install-guide a {
+  color: var(--amber);
+}
 .download-ce {
   width: min(100%, 640px);
   margin-top: 40px;
