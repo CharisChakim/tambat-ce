@@ -265,6 +265,34 @@ h1 em {
   gap: 12px;
 }
 
+nav .platform-signin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--amber-soft);
+  border-radius: 8px;
+  color: var(--amber);
+  font-weight: 700;
+}
+
+.web-beta {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  padding: 3px 5px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+}
+
+.web-entry-note {
+  max-width: 560px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
 .button {
   display: inline-flex;
   align-items: center;
