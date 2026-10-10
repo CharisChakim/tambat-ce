@@ -278,11 +278,9 @@ nav .platform-signin {
 }
 
 .web-beta {
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  padding: 3px 5px;
-  border: 1px solid currentColor;
-  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.75;
 }
 
 .web-entry-note {
@@ -315,6 +313,10 @@ nav .platform-signin {
 .button-primary {
   background: var(--amber);
   color: #172026;
+}
+
+.button-web {
+  gap: 10px;
 }
 
 .button-primary:hover {
